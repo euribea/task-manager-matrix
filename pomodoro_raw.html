@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Concentration Mode - Pomodoro Timer</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#195de6",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#111621",
+                        "surface-dark": "#1a202c",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom utilities for the circular progress */
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen flex flex-col overflow-hidden">
+<!-- Top Navigation / Header -->
+<header class="flex items-center justify-between px-6 py-4 md:px-10 border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-[#111621]/90 backdrop-blur-md z-10">
+<div class="flex items-center gap-3">
+<div class="p-2 rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-2xl">timelapse</span>
+</div>
+<div>
+<h1 class="text-base font-bold leading-tight">Concentration Mode</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Productivity Suite</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors">
+<span class="material-symbols-outlined">volume_up</span>
+</button>
+<button class="flex items-center justify-center p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors">
+<span class="material-symbols-outlined">fullscreen</span>
+</button>
+<button class="hidden md:flex h-9 items-center justify-center px-4 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-bold transition-colors">
+                Exit Mode
+            </button>
+<button class="md:hidden flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-bold transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col items-center justify-center relative w-full max-w-7xl mx-auto px-4 py-6">
+<!-- Task Info -->
+<div class="flex flex-col items-center gap-2 mb-8 md:mb-12 text-center animate-fade-in-up">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wide">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                Focus Session
+            </div>
+<h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                Drafting Q3 Report
+            </h2>
+<button class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm flex items-center gap-1 transition-colors mt-2">
+<span class="material-symbols-outlined text-base">edit</span>
+<span>Edit Task Name</span>
+</button>
+</div>
+<!-- Timer Module -->
+<div class="relative flex flex-col items-center justify-center mb-10">
+<!-- Circular Progress -->
+<div class="relative w-[280px] h-[280px] md:w-[360px] md:h-[360px] lg:w-[420px] lg:h-[420px]">
+<svg class="w-full h-full" viewbox="0 0 100 100">
+<!-- Background Circle -->
+<circle class="text-slate-200 dark:text-slate-800" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-width="2"></circle>
+<!-- Progress Circle -->
+<circle class="text-primary progress-ring__circle drop-shadow-[0_0_10px_rgba(25,93,230,0.4)]" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="283" stroke-dashoffset="70" stroke-linecap="round" stroke-width="2"></circle>
+</svg>
+<!-- Center Content -->
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="text-[5rem] md:text-[6.5rem] lg:text-[7.5rem] font-bold leading-none tracking-tighter tabular-nums text-slate-900 dark:text-white">
+                        25:00
+                    </span>
+<p class="text-slate-500 dark:text-slate-400 font-medium text-lg mt-2">until break</p>
+</div>
+</div>
+<!-- Controls -->
+<div class="absolute -bottom-8 md:-bottom-10 flex items-center gap-4">
+<button class="group flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-all shadow-lg hover:shadow-xl">
+<span class="material-symbols-outlined text-2xl md:text-3xl">replay</span>
+</button>
+<button class="group flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-primary hover:bg-blue-600 text-white transition-all shadow-lg hover:shadow-primary/50 hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined text-4xl md:text-5xl fill-current">play_arrow</span>
+</button>
+<button class="group flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-all shadow-lg hover:shadow-xl">
+<span class="material-symbols-outlined text-2xl md:text-3xl">stop</span>
+</button>
+</div>
+</div>
+<!-- Mode Toggles -->
+<div class="mt-16 md:mt-20 flex p-1 bg-slate-200 dark:bg-slate-800/50 rounded-xl">
+<button class="px-6 py-2 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-sm font-bold text-slate-900 dark:text-white transition-all">
+                Focus
+            </button>
+<button class="px-6 py-2 rounded-lg text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+                Short Break
+            </button>
+<button class="px-6 py-2 rounded-lg text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+                Long Break
+            </button>
+</div>
+<!-- Finish Session Button -->
+<div class="mt-8">
+<button class="text-sm font-semibold text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-700 px-6 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">check_circle</span>
+                Finish Session Early
+            </button>
+</div>
+</main>
+<!-- Footer: Daily Stats -->
+<footer class="w-full border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-[#111621]/90 backdrop-blur-md px-6 py-4">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400">Sessions Today:</span>
+<div class="flex items-center gap-1.5">
+<!-- Completed sessions -->
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<!-- Pending/Empty slots -->
+<div class="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+</div>
+<span class="text-xs text-slate-400 dark:text-slate-500 ml-1">(4/8)</span>
+</div>
+<div class="flex items-center gap-6 text-sm text-slate-500 dark:text-slate-400">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">bolt</span>
+<span>High Focus</span>
+</div>
+<div class="w-px h-4 bg-slate-300 dark:bg-slate-700"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">schedule</span>
+<span>Total: 2h 15m</span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

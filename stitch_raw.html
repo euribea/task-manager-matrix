@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Modern Task Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#195de6",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#0f1115",
+                        "surface-dark": "#1c1e26",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav {
+            background-color: rgba(25, 93, 230, 0.1);
+            color: #195de6;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased font-display">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark flex flex-col">
+<div class="p-6 flex items-center gap-3">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xl">bolt</span>
+</div>
+<h1 class="font-bold text-lg tracking-tight">FocusFlow</h1>
+</div>
+<nav class="flex-1 px-4 space-y-1 custom-scrollbar overflow-y-auto">
+<div class="py-2">
+<p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Navigation</p>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors" href="#">
+<span class="material-symbols-outlined">inbox</span>
+<span class="text-sm font-medium">Inbox</span>
+<span class="ml-auto text-xs bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">12</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg active-nav transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">calendar_today</span>
+<span class="text-sm font-medium">Today</span>
+<span class="ml-auto text-xs bg-primary/20 px-2 py-0.5 rounded-full">8</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors" href="#">
+<span class="material-symbols-outlined">event_upcoming</span>
+<span class="text-sm font-medium">Upcoming</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors" href="#">
+<span class="material-symbols-outlined">filter_list</span>
+<span class="text-sm font-medium">Filters</span>
+</a>
+</div>
+<div class="py-4">
+<div class="flex items-center justify-between px-3 mb-2">
+<p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Projects</p>
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors" href="#">
+<span class="size-2 rounded-full bg-blue-500"></span>
+<span class="text-sm font-medium">Work</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors" href="#">
+<span class="size-2 rounded-full bg-purple-500"></span>
+<span class="text-sm font-medium">Personal</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors" href="#">
+<span class="size-2 rounded-full bg-emerald-500"></span>
+<span class="text-sm font-medium">Side Hustle</span>
+</a>
+</div>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3 p-2 rounded-xl bg-slate-100 dark:bg-surface-dark/50">
+<img class="size-10 rounded-full object-cover border-2 border-primary/20" data-alt="Profile photo of a professional user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBef2V6KgGcD3rG2EnaLfKY7fY_CeUdTu5uszpBKJh78iFZnAp5_suXgjjH047wqinMMHmBFQNYwLZd4jcgKYn3OSd7bkyHXV8Qd0bMsp3vsjdOb9rItuKp7GcKAtyM9ukCmB9MyfQv7RbHFfsf3biezm-6eNO0Ymn2VLFxf8J2ltDF6arN6bLY4nO-6r83etrUOYuU1_4Qv1LFgmekG3u8BCVXgNsiE6BY9-50g4Qqgx3ejRGYThtrNRHmWEjtxWsfNeLnXtIc2Z4"/>
+<div class="flex flex-col min-w-0">
+<p class="text-xs font-bold truncate">Alex Rivera</p>
+<p class="text-[10px] text-slate-500 truncate">Pro Member</p>
+</div>
+<button class="ml-auto text-slate-400">
+<span class="material-symbols-outlined text-lg">settings</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col relative overflow-hidden">
+<!-- Top Header -->
+<header class="h-20 flex items-center justify-between px-10 border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-background-dark/50 backdrop-blur-md z-10">
+<div class="flex items-center gap-4">
+<h2 class="text-2xl font-bold tracking-tight">Today</h2>
+<span class="text-slate-400 text-sm font-medium mt-1">Wednesday, Oct 25</span>
+</div>
+<div class="flex items-center gap-8">
+<!-- Progress Ring Section -->
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-xs font-semibold text-slate-400">Daily Goal</p>
+<p class="text-sm font-bold">8/12 Tasks</p>
+</div>
+<div class="relative size-12">
+<svg class="size-full -rotate-90" viewbox="0 0 36 36">
+<circle class="stroke-slate-200 dark:stroke-slate-800" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
+<circle class="stroke-primary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="100" stroke-dashoffset="33" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-[10px] font-bold">66%</span>
+</div>
+</div>
+</div>
+<div class="h-8 w-[1px] bg-slate-200 dark:border-slate-800"></div>
+<!-- Focus Mode Toggle -->
+<div class="flex items-center gap-3">
+<span class="text-sm font-medium text-slate-500">Focus Mode</span>
+<button class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-200 dark:bg-slate-700 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+<span class="translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+</header>
+<!-- Task List -->
+<div class="flex-1 overflow-y-auto custom-scrollbar px-10 py-8 space-y-2 pb-32">
+<!-- Section: High Priority -->
+<div class="mb-8">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-red-500 text-sm">priority_high</span>
+<h3 class="text-xs font-bold uppercase tracking-[0.1em] text-slate-400">High Priority</h3>
+</div>
+<!-- Task Item 1 -->
+<div class="group flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-transparent hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all cursor-pointer">
+<div class="flex-shrink-0 flex items-center justify-center">
+<input class="size-5 rounded border-2 border-slate-300 dark:border-slate-600 bg-transparent text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</div>
+<div class="size-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+<div class="flex-1 min-w-0">
+<h4 class="text-sm font-medium dark:text-slate-200 truncate">Quarterly Financial Review</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="flex items-center gap-1 text-[11px] font-semibold text-blue-500 px-2 py-0.5 rounded-full bg-blue-500/10 uppercase">Work</span>
+<span class="flex items-center gap-1 text-[11px] text-slate-500">
+<span class="material-symbols-outlined text-xs">calendar_month</span>
+                                    Due 2:00 PM
+                                </span>
+</div>
+</div>
+<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-xl">delete</span>
+</button>
+</div>
+</div>
+<!-- Task Item 2 -->
+<div class="group flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-transparent hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all mt-2 cursor-pointer">
+<div class="flex-shrink-0 flex items-center justify-center">
+<input class="size-5 rounded border-2 border-slate-300 dark:border-slate-600 bg-transparent text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</div>
+<div class="size-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+<div class="flex-1 min-w-0">
+<h4 class="text-sm font-medium dark:text-slate-200 truncate">Finalize Branding Guidelines</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="flex items-center gap-1 text-[11px] font-semibold text-emerald-500 px-2 py-0.5 rounded-full bg-emerald-500/10 uppercase">Side Hustle</span>
+<span class="flex items-center gap-1 text-[11px] text-red-400 font-medium">
+<span class="material-symbols-outlined text-xs">warning</span>
+                                    Overdue
+                                </span>
+</div>
+</div>
+<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-xl">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Section: Regular -->
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-slate-400 text-sm">list</span>
+<h3 class="text-xs font-bold uppercase tracking-[0.1em] text-slate-400">All Tasks</h3>
+</div>
+<!-- Row 3 -->
+<div class="group flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-transparent hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all mt-2 cursor-pointer">
+<div class="flex-shrink-0 flex items-center justify-center">
+<input class="size-5 rounded border-2 border-slate-300 dark:border-slate-600 bg-transparent text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</div>
+<div class="size-2 rounded-full bg-yellow-500"></div>
+<div class="flex-1 min-w-0">
+<h4 class="text-sm font-medium dark:text-slate-200 truncate">Call with Design Team</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="flex items-center gap-1 text-[11px] font-semibold text-blue-500 px-2 py-0.5 rounded-full bg-blue-500/10 uppercase">Work</span>
+<span class="flex items-center gap-1 text-[11px] text-slate-500">
+<span class="material-symbols-outlined text-xs">schedule</span>
+                                    4:30 PM
+                                </span>
+</div>
+</div>
+</div>
+<!-- Completed Tasks example -->
+<div class="group flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-surface-dark/40 border border-transparent mt-2 cursor-pointer opacity-60">
+<div class="flex-shrink-0 flex items-center justify-center">
+<input checked="" class="size-5 rounded border-2 border-primary bg-primary text-white focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</div>
+<div class="size-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+<div class="flex-1 min-w-0">
+<h4 class="text-sm font-medium dark:text-slate-400 truncate line-through">Grocery Shopping</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="flex items-center gap-1 text-[11px] font-semibold text-purple-500 px-2 py-0.5 rounded-full bg-purple-500/10 uppercase">Personal</span>
+</div>
+</div>
+</div>
+<!-- Row 5 -->
+<div class="group flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-transparent hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all mt-2 cursor-pointer">
+<div class="flex-shrink-0 flex items-center justify-center">
+<input class="size-5 rounded border-2 border-slate-300 dark:border-slate-600 bg-transparent text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</div>
+<div class="size-2 rounded-full bg-blue-500"></div>
+<div class="flex-1 min-w-0">
+<h4 class="text-sm font-medium dark:text-slate-200 truncate">Update Blog Post: "Productivity Hacks"</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="flex items-center gap-1 text-[11px] font-semibold text-emerald-500 px-2 py-0.5 rounded-full bg-emerald-500/10 uppercase">Side Hustle</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty State Filler -->
+<div class="py-12 flex flex-col items-center justify-center opacity-20">
+<span class="material-symbols-outlined text-6xl mb-2">task</span>
+<p class="text-sm font-medium">Keep it going</p>
+</div>
+</div>
+<!-- Floating Quick Add Bar -->
+<div class="absolute bottom-10 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 pointer-events-none">
+<div class="bg-white/80 dark:bg-surface-dark/90 backdrop-blur-xl border border-slate-200 dark:border-slate-700/50 p-3 rounded-2xl shadow-2xl flex items-center gap-3 pointer-events-auto">
+<button class="text-slate-400 hover:text-primary transition-colors pl-2">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-sm placeholder:text-slate-500 py-2" placeholder="Type a task and press enter..." type="text"/>
+<div class="flex items-center gap-2 pr-1">
+<button class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors uppercase tracking-wider">
+<span class="material-symbols-outlined text-base">calendar_add_on</span>
+                            Due
+                        </button>
+<button class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-bold text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors uppercase tracking-wider">
+<span class="material-symbols-outlined text-base">tag</span>
+                            Project
+                        </button>
+<button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/25">
+                            Add Task
+                        </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
