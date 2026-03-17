@@ -1,3 +1,8 @@
+export interface TaskLogEntry {
+  text: string;
+  timestamp: string;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -12,4 +17,5 @@ export interface Task {
   createdAt?: any;
   startDate?: any;
   dueDate?: any;
+  log?: TaskLogEntry[];
 }
