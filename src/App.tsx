@@ -9,6 +9,7 @@ import { GanttChart } from './components/GanttChart';
 import { InsightsView } from './components/InsightsView';
 import { TaskMatrix } from './components/TaskMatrix';
 import { TaskEditModal } from './components/TaskEditModal';
+import { SettingsView } from './components/SettingsView';
 
 type ViewMode = 'dashboard' | 'tasks' | 'gantt' | 'matrix' | 'insights' | 'pomodoro' | 'settings';
 
@@ -21,6 +22,28 @@ function App() {
   const [activePomodoroTask, setActivePomodoroTask] = useState<Task | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // App Customization State
+  const [appName, setAppName] = useState(() => localStorage.getItem('appName') || 'TaskMaster');
+  const [appIcon, setAppIcon] = useState(() => localStorage.getItem('appIcon') || 'task_alt');
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => (localStorage.getItem('theme') as 'dark' | 'light') || 'dark');
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('appName', appName);
+  }, [appName]);
+
+  useEffect(() => {
+    localStorage.setItem('appIcon', appIcon);
+  }, [appIcon]);
 
   useEffect(() => {
     // We remove the order by 'createdAt' as it might be missing in existing documents
@@ -175,15 +198,26 @@ function App() {
         return <InsightsView tasks={tasks} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onEdit={handleEditTask} onStart={handleStartPomodoro} />;
       case 'matrix':
         return <TaskMatrix tasks={tasks} onStart={handleStartPomodoro} onEdit={handleEditTask} onDelete={handleDeleteTask} onUpdate={handleUpdateTask} />;
+      case 'settings':
+        return (
+          <SettingsView 
+            appName={appName} 
+            setAppName={setAppName} 
+            appIcon={appIcon} 
+            setAppIcon={setAppIcon} 
+            theme={theme} 
+            setTheme={setTheme} 
+          />
+        );
       case 'tasks':
       case 'dashboard':
       default:
         return (
           <>
             {/* Header */}
-            <header className="h-20 shrink-0 px-6 md:px-10 flex items-center justify-between border-b border-slate-800 bg-background-dark/95 backdrop-blur z-10">
+            <header className="h-20 shrink-0 px-6 md:px-10 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-background-dark/95 backdrop-blur z-10 transition-colors">
                 <div className="flex flex-col">
-                    <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">
+                    <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
                       {currentView === 'tasks' ? 'My Tasks' : `Good morning, Alex`}
                     </h2>
                     {currentView === 'dashboard' && (
@@ -362,16 +396,18 @@ function App() {
   };
 
   return (
-      <div className="flex h-screen w-full overflow-hidden bg-background-dark text-slate-100 font-display">
+      <div className="flex h-screen w-full overflow-hidden bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display transition-colors">
       {/* Sidebar - matches Stitch design exactly */}
-      <aside className="hidden md:flex flex-col w-72 bg-[#111722] border-r border-slate-800 h-full shrink-0">
+      <aside className="hidden md:flex flex-col w-72 bg-white dark:bg-[#111722] border-r border-slate-200 dark:border-slate-800 h-full shrink-0 transition-colors">
           <div className="flex flex-col h-full justify-between p-4">
               <div className="flex flex-col gap-6">
                   {/* User Profile Header */}
                   <div className="flex gap-3 items-center px-2">
-                      <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/30" style={{ backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuDZrdP5MAjj26HGZUu0ZifL0ziDdIRAq4AgApnOUo2DTA7A0d0HIzoXu80SqjupW3jxaNhE0Jj4PthIE-Xl-goB6q7bvU-lq_ntXGW_b5UOUF4CtrT7Nq77tMxgwkvOhaPnZa8w7oakTAMdaJIV1vWUDqow8FcQncoJAOK6VuQlr6XbMBFFM5DHmDwOxrHphvF9sUTKNUrRukNS4WRRapBDBzP59ymfZZwmS3KQEGKoen1MNUng9l_mFidvmeJkrLYIQMGajRmtELc")`}}></div>
+                      <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/30 flex items-center justify-center bg-slate-800">
+                        <span className="material-symbols-outlined text-primary text-[24px]">{appIcon}</span>
+                      </div>
                       <div className="flex flex-col">
-                          <h1 className="text-white text-base font-bold leading-tight">TaskMaster</h1>
+                          <h1 className="text-white text-base font-bold leading-tight">{appName}</h1>
                           <p className="text-slate-400 text-xs font-medium">Pro Plan</p>
                       </div>
                   </div>
@@ -396,7 +432,7 @@ function App() {
                           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all w-full text-left ${
                             currentView === item.id
                               ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                              : 'text-slate-400 hover:text-white hover:bg-surface-lighter'
+                              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-surface-lighter'
                           }`}
                         >
                             <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
@@ -408,25 +444,29 @@ function App() {
               {/* Bottom Actions */}
               <div className="flex flex-col gap-2 mt-auto">
                   {/* Storage indicator */}
-                  <div className="px-3 py-4 rounded-xl bg-surface-lighter/50 border border-slate-700/50">
+                  <div className="px-3 py-4 rounded-xl bg-slate-100 dark:bg-surface-lighter/50 border border-slate-200 dark:border-slate-700/50 transition-colors">
                       <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-semibold text-slate-300">Storage</span>
+                          <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Storage</span>
                           <span className="text-xs font-medium text-primary">75%</span>
                       </div>
-                      <div className="w-full bg-slate-700 rounded-full h-1.5">
+                      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 transition-colors">
                           <div className="bg-primary h-1.5 rounded-full" style={{ width: '75%' }}></div>
                       </div>
                   </div>
                   {/* Settings */}
                   <button 
                     onClick={() => setCurrentView('settings')}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-lighter transition-colors"
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                      currentView === 'settings' 
+                      ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-surface-lighter'
+                    }`}
                   >
                       <span className="material-symbols-outlined text-[20px]">settings</span>
                       <span className="text-sm font-medium">Settings</span>
                   </button>
                   {/* Log Out */}
-                  <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-colors">
+                  <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10 transition-colors">
                       <span className="material-symbols-outlined text-[20px]">logout</span>
                       <span className="text-sm font-medium">Log Out</span>
                   </button>
