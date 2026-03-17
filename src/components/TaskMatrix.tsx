@@ -49,25 +49,79 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
     { label: 'Done', count: tasks.filter(t => t.status === 'completed').length, color: 'bg-green-400', icon: 'check_circle' },
   ];
 
-  const QuadrantCard = ({ title, subtitle, color, qTasks, onUpdate, onDelete, onEdit, onStart }: { title: string; subtitle: string; color: string; qTasks: MatrixTask[] } & Omit<TaskMatrixProps, 'tasks'>) => (
-    <div className={`bg-surface-lighter rounded-xl border border-slate-700/50 p-5 flex flex-col`}>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <h4 className={`text-sm font-bold ${color} uppercase tracking-wider`}>{title}</h4>
-          <span className="text-[10px] text-slate-400 font-medium">{subtitle}</span>
+  const QuadrantCard = ({ 
+    title, 
+    subtitle, 
+    color, 
+    qTasks, 
+    quadrantId,
+    onUpdate, 
+    onDelete, 
+    onEdit, 
+    onStart 
+  }: { 
+    title: string; 
+    subtitle: string; 
+    color: string; 
+    qTasks: MatrixTask[];
+    quadrantId: 1 | 2 | 3 | 4;
+  } & Omit<TaskMatrixProps, 'tasks'>) => {
+    
+    const handleDragStart = (e: React.DragEvent, taskId: string) => {
+      e.dataTransfer.setData('taskId', taskId);
+      e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+      e.preventDefault();
+      const taskId = e.dataTransfer.getData('taskId');
+      if (!taskId) return;
+
+      // Determine new priority based on quadrant
+      let isUrgent = false;
+      let isImportant = false;
+
+      if (quadrantId === 1) { isUrgent = true; isImportant = true; }
+      else if (quadrantId === 2) { isUrgent = false; isImportant = true; }
+      else if (quadrantId === 3) { isUrgent = true; isImportant = false; }
+      else if (quadrantId === 4) { isUrgent = false; isImportant = false; }
+
+      onUpdate(taskId, { isUrgent, isImportant });
+    };
+
+    return (
+      <div 
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        className={`bg-surface-lighter rounded-xl border border-slate-700/50 p-5 flex flex-col min-h-[250px] transition-colors hover:border-slate-600`}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <h4 className={`text-sm font-bold ${color} uppercase tracking-wider`}>{title}</h4>
+            <span className="text-[10px] text-slate-400 font-medium">{subtitle}</span>
+          </div>
+          <button className="p-1 text-slate-400 hover:text-white rounded hover:bg-slate-700 transition-colors">
+            <span className="material-symbols-outlined text-[18px]">add</span>
+          </button>
         </div>
-        <button className="p-1 text-slate-400 hover:text-white rounded hover:bg-slate-700 transition-colors">
-          <span className="material-symbols-outlined text-[18px]">add</span>
-        </button>
-      </div>
-      <div className="flex flex-col gap-4 flex-1">
-        {qTasks.map((task) => (
-          <div key={task.id} className="group flex flex-col gap-2 p-3 rounded-xl bg-slate-800/30 border border-slate-700/50 hover:border-primary/30 transition-all hover:bg-slate-800/50">
-            <div className="flex items-center justify-between">
-              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${color.replace('text-', 'border-').replace('text-', 'bg-')}/20 ${color} bg-slate-900/50`}>
-                {task.quadrantId === 1 ? 'DO' : task.quadrantId === 2 ? 'PLAN' : task.quadrantId === 3 ? 'DELEGATE' : 'DROP'}
-              </span>
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex flex-col gap-4 flex-1">
+          {qTasks.map((task) => (
+            <div 
+              key={task.id} 
+              draggable
+              onDragStart={(e) => handleDragStart(e, task.id)}
+              className="group flex flex-col gap-2 p-3 rounded-xl bg-slate-800/30 border border-slate-700/50 hover:border-primary/30 transition-all hover:bg-slate-800/50 cursor-grab active:cursor-grabbing"
+            >
+              <div className="flex items-center justify-between pointer-events-none">
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${color.replace('text-', 'border-').replace('text-', 'bg-')}/20 ${color} bg-slate-900/50`}>
+                  {task.quadrantId === 1 ? 'DO' : task.quadrantId === 2 ? 'PLAN' : task.quadrantId === 3 ? 'DELEGATE' : 'DROP'}
+                </span>
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto">
                 <button 
                   onClick={() => onUpdate(task.id, { status: 'completed' })}
                   className="p-1 hover:bg-green-500/20 text-slate-400 hover:text-green-500 rounded transition-colors" 
@@ -117,7 +171,8 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
         )}
       </div>
     </div>
-  );
+    );
+  };
 
   return (
     <div className="flex flex-col h-full overflow-y-auto">
@@ -182,6 +237,7 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
               subtitle="Important & Urgent"
               color="text-primary" 
               qTasks={matrixTasks.filter(t => t.quadrantId === 1)} 
+              quadrantId={1}
               onUpdate={onUpdate}
               onDelete={onDelete}
               onEdit={onEdit}
@@ -192,6 +248,7 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
               subtitle="Important but Not Urgent"
               color="text-yellow-400" 
               qTasks={matrixTasks.filter(t => t.quadrantId === 2)} 
+              quadrantId={2}
               onUpdate={onUpdate}
               onDelete={onDelete}
               onEdit={onEdit}
@@ -202,6 +259,7 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
               subtitle="Urgent but Not Important"
               color="text-purple-400" 
               qTasks={matrixTasks.filter(t => t.quadrantId === 3)} 
+              quadrantId={3}
               onUpdate={onUpdate}
               onDelete={onDelete}
               onEdit={onEdit}
@@ -212,6 +270,7 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
               subtitle="Not Important & Not Urgent"
               color="text-slate-400" 
               qTasks={matrixTasks.filter(t => t.quadrantId === 4)} 
+              quadrantId={4}
               onUpdate={onUpdate}
               onDelete={onDelete}
               onEdit={onEdit}
