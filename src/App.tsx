@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { db } from './firebase';
 import { collection, addDoc, onSnapshot, query, doc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
-import type { Task } from './types/Task';
+import type { Task, Project } from './types/Task';
 import { TaskList } from './components/TaskList';
 import { TaskForm } from './components/TaskForm';
 import { Timer } from './components/Timer';
@@ -15,6 +15,8 @@ type ViewMode = 'dashboard' | 'tasks' | 'gantt' | 'matrix' | 'insights' | 'pomod
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<ViewMode>('dashboard');
@@ -46,20 +48,26 @@ function App() {
   }, [appIcon]);
 
   useEffect(() => {
-    // We remove the order by 'createdAt' as it might be missing in existing documents
-    const q = query(collection(db, 'tasks'));
-    
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    // Fetcch Projects
+    const qProjects = query(collection(db, 'projects'));
+    const unsubscribeProjects = onSnapshot(qProjects, (querySnapshot) => {
+      const projectsData: Project[] = [];
+      querySnapshot.forEach((doc) => {
+        projectsData.push({ id: doc.id, ...doc.data() } as Project);
+      });
+      setProjects(projectsData);
+    });
+
+    // Fetch Tasks
+    const qTasks = query(collection(db, 'tasks'));
+    const unsubscribeTasks = onSnapshot(qTasks, (querySnapshot) => {
       const tasksData: Task[] = [];
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        // Normalizing data from user's schema
         tasksData.push({ 
           id: doc.id, 
           ...data,
-          // Map 'notes' to 'description' if description is missing
           description: data.description || data.notes || '',
-          // Map 'Pendiente' or 'Completado' to 'pending' or 'completed'
           status: (data.status === 'Pendiente' || data.status === 'pending') ? 'pending' : 
                   (data.status === 'Completada' || data.status === 'Completado' || data.status === 'completed') ? 'completed' : 'in-progress'
         } as Task);
@@ -67,7 +75,6 @@ function App() {
       setTasks(tasksData);
       setLoading(false);
       
-      // Update active pomodoro task reference if it was changed externally
       if (activePomodoroTask) {
         const updatedTask = tasksData.find(t => t.id === activePomodoroTask.id);
         if (updatedTask) {
@@ -76,11 +83,14 @@ function App() {
       }
     }, (err) => {
       console.error("Error fetching tasks: ", err);
-      setError("Failed to load tasks. Please check your Firestore rules.");
+      setError("Failed to load tasks.");
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeProjects();
+      unsubscribeTasks();
+    };
   }, [activePomodoroTask]);
 
   const handleAddTask = async (title: string, description: string) => {
@@ -92,6 +102,7 @@ function App() {
         priority: 'Baja',
         isUrgent: false,
         isImportant: false,
+        projectId: selectedProjectId || '',
         userId: 'flux-titan-user-001',
         createdAt: serverTimestamp(),
       });
@@ -130,6 +141,26 @@ function App() {
     }
   };
 
+  const handleCreateProject = async () => {
+    const name = prompt('Project Name:');
+    if (!name) return;
+    
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+    try {
+      await addDoc(collection(db, 'projects'), {
+        name,
+        color: randomColor,
+        userId: 'flux-titan-user-001',
+        createdAt: serverTimestamp(),
+      });
+    } catch (err: any) {
+      console.error("Error creating project: ", err);
+      setError(err.message || 'Error occurred while creating project.');
+    }
+  };
+
   const handleStartPomodoro = (task: Task) => {
     setActivePomodoroTask(task);
   };
@@ -159,6 +190,7 @@ function App() {
          <TaskEditModal 
            task={editingTask}
            isOpen={isEditModalOpen}
+           projects={projects}
            onClose={() => {
              setIsEditModalOpen(false);
              setEditingTask(null);
@@ -173,10 +205,15 @@ function App() {
     );
   }
 
+  // Filter tasks by selected project
+  const filteredTasks = selectedProjectId 
+    ? tasks.filter(t => t.projectId === selectedProjectId)
+    : tasks;
+
   // Dashboard stats
-  const completedCount = tasks.filter(t => t.status === 'completed').length;
-  const pendingCount = tasks.length - completedCount;
-  const progressPercent = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
+  const completedCount = filteredTasks.filter(t => t.status === 'completed').length;
+  const pendingCount = filteredTasks.length - completedCount;
+  const progressPercent = filteredTasks.length > 0 ? Math.round((completedCount / filteredTasks.length) * 100) : 0;
 
   // Navigation items matching the Stitch sidebar design  
   const navItems: { id: ViewMode; icon: string; label: string }[] = [
@@ -454,6 +491,46 @@ function App() {
                         </button>
                       ))}
                   </nav>
+
+                  {/* Projects Section */}
+                  <div className="flex flex-col gap-2 mt-4">
+                      <div className="flex items-center justify-between px-3">
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Projects</span>
+                          <button 
+                            onClick={handleCreateProject}
+                            className="p-1 hover:bg-slate-100 dark:hover:bg-surface-lighter rounded text-slate-500 transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-[18px]">add</span>
+                          </button>
+                      </div>
+                      <div className="flex flex-col gap-1 max-h-[250px] overflow-y-auto pr-1 flex-1">
+                          <button 
+                            onClick={() => setSelectedProjectId(null)}
+                            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-left ${
+                              !selectedProjectId 
+                              ? 'bg-slate-100 dark:bg-surface-lighter text-slate-900 dark:text-white font-semibold' 
+                              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                            }`}
+                          >
+                              <span className="material-symbols-outlined text-[18px]">all_out</span>
+                              <span className="text-sm">All Tasks</span>
+                          </button>
+                          {projects.map(project => (
+                              <button 
+                                key={project.id}
+                                onClick={() => setSelectedProjectId(project.id)}
+                                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-left group ${
+                                  selectedProjectId === project.id
+                                  ? 'bg-primary/10 text-primary font-semibold'
+                                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                                }`}
+                              >
+                                  <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: project.color || '#3b82f6' }}></div>
+                                  <span className="text-sm truncate">{project.name}</span>
+                              </button>
+                          ))}
+                      </div>
+                  </div>
               </div>
               {/* Bottom Actions */}
               <div className="flex flex-col gap-2 mt-auto">
@@ -497,6 +574,7 @@ function App() {
       <TaskEditModal 
         task={editingTask}
         isOpen={isEditModalOpen}
+        projects={projects}
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleUpdateTask}
       />

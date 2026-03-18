@@ -4,16 +4,18 @@ import type { Task, TaskLogEntry } from '../types/Task';
 interface TaskEditModalProps {
   task: Task | null;
   isOpen: boolean;
+  projects: any[]; // Project[] or any[]
   onClose: () => void;
   onSave: (id: string, updates: Partial<Task>) => void;
 }
 
-export const TaskEditModal: React.FC<TaskEditModalProps> = ({ task, isOpen, onClose, onSave }) => {
+export const TaskEditModal: React.FC<TaskEditModalProps> = ({ task, isOpen, projects, onClose, onSave }) => {
   const [title, setTitle] = useState('');
   const [notes, setNotes] = useState('');
   const [isUrgent, setIsUrgent] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
   const [status, setStatus] = useState('Pendiente');
+  const [projectId, setProjectId] = useState('');
   const [log, setLog] = useState<TaskLogEntry[]>([]);
   const [logInput, setLogInput] = useState('');
 
@@ -24,6 +26,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({ task, isOpen, onCl
       setIsUrgent(task.isUrgent || false);
       setIsImportant(task.isImportant || false);
       setStatus(task.status || 'Pendiente');
+      setProjectId(task.projectId || '');
       setLog(task.log || []);
     }
   }, [task]);
@@ -57,6 +60,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({ task, isOpen, onCl
       isUrgent,
       isImportant,
       status,
+      projectId,
       log
     });
     onClose();
@@ -184,6 +188,20 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({ task, isOpen, onCl
                 <option value="Completada">Done (Completada)</option>
               </select>
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Project</label>
+            <select 
+              value={projectId}
+              onChange={(e) => setProjectId(e.target.value)}
+              className="bg-slate-50 dark:bg-[#1e2636] border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:border-primary outline-none transition-colors appearance-none cursor-pointer"
+            >
+              <option value="">No Project (General)</option>
+              {projects.map(p => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
           </div>
 
           <div className="flex items-center justify-end gap-3 mt-4">

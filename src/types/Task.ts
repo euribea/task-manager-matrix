@@ -3,6 +3,14 @@ export interface TaskLogEntry {
   timestamp: string;
 }
 
+export interface Project {
+  id: string;
+  name: string;
+  color?: string; // For visual grouping
+  userId?: string;
+  createdAt?: any;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -14,6 +22,7 @@ export interface Task {
   isImportant?: boolean;
   estimatedMinutes?: number;
   userId?: string;
+  projectId?: string; // Foreign key to a Project
   createdAt?: any;
   startDate?: any;
   dueDate?: any;
