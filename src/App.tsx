@@ -153,8 +153,22 @@ function App() {
   // If we have an active pomodoro task, render ONLY the Timer View
   if (activePomodoroTask) {
     return (
-      <div className="flex h-screen w-full overflow-hidden bg-background-dark text-slate-100 font-display">
-         <Timer task={activePomodoroTask} onExit={() => setActivePomodoroTask(null)} />
+      <div className="flex flex-col relative h-screen w-full overflow-hidden bg-background-dark text-slate-100 font-display">
+         <Timer task={activePomodoroTask} onExit={() => setActivePomodoroTask(null)} onEdit={() => handleEditTask(activePomodoroTask)} />
+         {/* Edit Modal for Pomodoro View */}
+         <TaskEditModal 
+           task={editingTask}
+           isOpen={isEditModalOpen}
+           onClose={() => {
+             setIsEditModalOpen(false);
+             setEditingTask(null);
+           }}
+           onSave={async (id, updates) => {
+             await handleUpdateTask(id, updates);
+             setIsEditModalOpen(false);
+             setEditingTask(null);
+           }}
+         />
       </div>
     );
   }

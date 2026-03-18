@@ -6,9 +6,10 @@ import { doc, updateDoc } from 'firebase/firestore';
 interface TimerProps {
   task: Task;
   onExit: () => void;
+  onEdit: () => void;
 }
 
-export const Timer: React.FC<TimerProps> = ({ task, onExit }) => {
+export const Timer: React.FC<TimerProps> = ({ task, onExit, onEdit }) => {
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [isActive, setIsActive] = useState(false);
   const [mode, setMode] = useState<'focus' | 'shortBreak' | 'longBreak'>('focus');
@@ -107,12 +108,12 @@ export const Timer: React.FC<TimerProps> = ({ task, onExit }) => {
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
             {mode === 'focus' ? 'Focus Session' : 'Break Time'}
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-2">
             {task.title}
           </h2>
-          <button className="text-slate-400 hover:text-primary text-sm flex items-center gap-1 transition-colors mt-2">
-            <span className="material-symbols-outlined text-base">edit</span>
-            <span>Edit Task Name</span>
+          <button onClick={onEdit} className="text-slate-400 hover:text-primary text-sm flex items-center justify-center gap-1.5 transition-colors mt-2 px-3 py-1.5 rounded-lg hover:bg-slate-800/50">
+            <span className="material-symbols-outlined text-[18px]">edit_note</span>
+            <span className="font-medium">View & Edit Details</span>
           </button>
         </div>
 
