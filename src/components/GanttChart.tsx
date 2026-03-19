@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import type { Task } from '../types/Task';
+import { useState, useMemo } from 'react';
+import type { Task, Project } from '../types/Task';
 
 interface GanttChartProps {
   tasks: Task[];
+  projects: Project[];
   onUpdate: (id: string, updates: Partial<Task>) => void;
   onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
@@ -10,63 +11,93 @@ interface GanttChartProps {
 }
 
 interface GanttTask {
+  id: string;
   name: string;
   duration: string;
   startDay: number;
   lengthDays: number;
   color: string;
-  phase?: string;
   isMilestone?: boolean;
-  originalTask?: Task;
+  originalTask: Task;
 }
 
-export const GanttChart: React.FC<GanttChartProps> = ({ tasks, onUpdate, onDelete, onEdit, onStart }) => {
+interface ProjectGroup {
+  id: string;
+  name: string;
+  color: string;
+  tasks: GanttTask[];
+}
+
+export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdate, onDelete, onEdit, onStart }) => {
   const [viewMode, setViewMode] = useState<'Timeline' | 'Board' | 'List'>('Timeline');
 
-  // Generate Gantt data from real tasks + some static demo data for visual completeness
-  const phases: { phase: string; tasks: GanttTask[] }[] = [
-    {
-      phase: 'Phase 1: Planning',
-      tasks: [
-        { name: 'Market Research', duration: '5 days', startDay: 0, lengthDays: 5, color: 'bg-green-500' },
-        { name: 'Competitor Analysis', duration: '3 days', startDay: 3, lengthDays: 3, color: 'bg-cyan-400' },
-        { name: 'Draft Strategy', duration: '4 days', startDay: 5, lengthDays: 4, color: 'bg-purple-400' },
-      ]
-    },
-    {
-      phase: 'Phase 2: Execution',
-      tasks: [
-        { name: 'Design Assets', duration: '7 days', startDay: 7, lengthDays: 7, color: 'bg-pink-500' },
-        { name: 'Content Creation', duration: '5 days', startDay: 9, lengthDays: 5, color: 'bg-pink-400' },
-        { name: 'Social Media Plan', duration: '5 days', startDay: 11, lengthDays: 5, color: 'bg-pink-300' },
-      ]
-    },
-  ];
-
-  // Also add real tasks as milestones
-  const realTasksMilestones: GanttTask[] = tasks.filter(t => t.status !== 'completed').slice(0, 5).map((t, i) => ({
-    name: t.title,
-    duration: '1 day',
-    startDay: 14 + i,
-    lengthDays: 1,
-    color: 'bg-yellow-400',
-    isMilestone: true,
-    originalTask: t
-  }));
-
+  // Days for the header
   const days = ['01 Mon', '02 Tue', '03 Wed', '04 Thu', '05 Fri', '06 Sat', '07 Sun', '08 Mon', '09 Tue', '10 Wed', '11 Thu', '12 Fri', '13 Sat', '14 Sun', '15 Mon', '16 Tue', '17 Wed', '18 Thu'];
-  const todayIndex = 4; // The "today" line
+  const todayIndex = 4; // Mock today
+
+  const projectGroups = useMemo(() => {
+    const groups: ProjectGroup[] = [];
+
+    // Add each project's tasks
+    projects.forEach(project => {
+      const projectTasks = tasks.filter(t => t.projectId === project.id);
+      if (projectTasks.length > 0) {
+        groups.push({
+          id: project.id,
+          name: project.name,
+          color: project.color || '#3b82f6',
+          tasks: projectTasks.map((t, index) => {
+            // Logic to spread tasks in the timeline if no dates are set
+            // In a real app, this would use t.startDate and t.dueDate
+            const startDay = index % 10;
+            const lengthDays = 2 + (index % 5);
+            
+            return {
+              id: t.id,
+              name: t.title,
+              duration: `${lengthDays} days`,
+              startDay,
+              lengthDays,
+              color: `bg-[${project.color}]` || 'bg-primary',
+              originalTask: t
+            };
+          })
+        });
+      }
+    });
+
+    // Add tasks with no project
+    const orphanTasks = tasks.filter(t => !t.projectId);
+    if (orphanTasks.length > 0) {
+      groups.push({
+        id: 'no-project',
+        name: 'Uncategorized Tasks',
+        color: '#64748b',
+        tasks: orphanTasks.map((t, index) => ({
+          id: t.id,
+          name: t.title,
+          duration: '1 day',
+          startDay: 10 + (index % 5),
+          lengthDays: 1,
+          color: 'bg-slate-500',
+          isMilestone: true,
+          originalTask: t
+        }))
+      });
+    }
+
+    return groups;
+  }, [tasks, projects]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-background-dark text-slate-100 font-display">
       {/* Top Navigation Bar */}
       <header className="shrink-0 px-6 md:px-10 py-4 flex items-center justify-between border-b border-slate-800 bg-background-dark/95 backdrop-blur z-10">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-400">
-            <span>Projects</span>
-            <span className="material-symbols-outlined text-sm">chevron_right</span>
-            <span className="text-white font-semibold">Q4 Marketing Launch</span>
-            <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 text-xs font-bold ml-2">Active</span>
+            <span className="material-symbols-outlined text-primary">account_tree</span>
+            <span className="text-white font-semibold">Project Roadmap</span>
+            <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-bold ml-2">Real-time</span>
           </div>
         </div>
       </header>
@@ -78,7 +109,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, onUpdate, onDelet
             <button
               key={v}
               onClick={() => setViewMode(v)}
-              className={`px-4 py-1.5 rounded-md text-sm transition-all ${viewMode === v ? 'bg-slate-700 text-white font-bold shadow-sm' : 'text-slate-400 hover:text-white'}`}
+              className={`px-4 py-1.5 rounded-md text-sm transition-all ${viewMode === v ? 'bg-primary text-white font-bold shadow-sm' : 'text-slate-400 hover:text-white'}`}
             >
               {v}
             </button>
@@ -89,23 +120,11 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, onUpdate, onDelet
             <span className="material-symbols-outlined text-[18px]">filter_list</span>
             Filter
           </button>
-          <button className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors">
-            <span className="material-symbols-outlined text-[18px]">sort</span>
-            Sort
-          </button>
           <div className="flex items-center gap-1 bg-slate-800/50 rounded-lg px-3 py-1.5">
             <span className="text-sm text-white font-medium">Today</span>
           </div>
-          <div className="flex items-center border border-slate-700 rounded-lg overflow-hidden">
-            <button className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
-              <span className="material-symbols-outlined text-[18px]">chevron_left</span>
-            </button>
-            <button className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
-              <span className="material-symbols-outlined text-[18px]">chevron_right</span>
-            </button>
-          </div>
-          <span className="text-sm text-slate-400 font-medium">Month</span>
-          <button className="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-primary/25 transition-all">
+          <span className="text-sm text-slate-400 font-medium">{new Date().toLocaleString('default', { month: 'long', year: 'numeric' }).toUpperCase()}</span>
+          <button className="hidden md:flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-primary/25 transition-all">
             <span className="material-symbols-outlined text-[18px]">add</span>
             Add Task
           </button>
@@ -113,79 +132,62 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, onUpdate, onDelet
       </div>
 
       {/* Gantt Chart Area */}
-      <div className="flex-1 overflow-auto">
-        <div className="flex min-w-[1200px]">
+      <div className="flex-1 overflow-auto scrollbar-hide">
+        <div className="flex min-w-[1200px] h-full">
           {/* Left Panel: Task List */}
-          <div className="w-72 shrink-0 border-r border-slate-800">
-            {/* Header */}
-            <div className="flex items-center px-4 py-3 border-b border-slate-800">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex-1">Task Name</span>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider w-20 text-right">Duration</span>
+          <div className="w-80 shrink-0 border-r border-slate-800 bg-background-dark/50 overflow-y-auto">
+            <div className="flex items-center px-6 py-4 border-b border-slate-800 sticky top-0 bg-background-dark z-20">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex-1">Project / Task</span>
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider w-20 text-right">Time</span>
             </div>
-            {/* Tasks */}
-            {phases.map((phase) => (
-              <div key={phase.phase}>
-                <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-800/30 border-b border-slate-800/50">
-                  <span className="material-symbols-outlined text-primary text-[18px]">expand_more</span>
-                  <span className="text-sm font-bold text-white">{phase.phase}</span>
-                  <span className="text-xs text-slate-400 ml-auto">{phase.tasks.reduce((sum, t) => sum + t.lengthDays, 0)} days</span>
+            
+            {projectGroups.map((group) => (
+              <div key={group.id} className="border-b border-slate-800/50">
+                <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/20 group hover:bg-slate-800/40 transition-colors">
+                  <div className="w-1 h-6 rounded-full" style={{ backgroundColor: group.color }}></div>
+                  <span className="text-sm font-bold text-white flex-1 truncate">{group.name}</span>
+                  <span className="text-[10px] font-bold text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">{group.tasks.length} tasks</span>
                 </div>
-                {phase.tasks.map((task) => (
-                  <div key={task.name} className="flex items-center px-4 py-2.5 border-b border-slate-800/30 hover:bg-slate-800/20 transition-colors cursor-pointer pl-10">
-                    <span className="text-sm text-slate-300 flex-1">{task.name}</span>
-                    <span className="text-xs text-slate-500 w-20 text-right">{task.duration}</span>
-                  </div>
-                ))}
-              </div>
-            ))}
-            {/* Milestones from real tasks */}
-            {realTasksMilestones.length > 0 && (
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2 px-4 py-2 bg-yellow-400/10 border-y border-yellow-400/20">
-                  <span className="text-[10px] font-bold text-yellow-500 uppercase tracking-widest">Active Milestones</span>
-                </div>
-                {realTasksMilestones.map((task) => (
-                  <div key={task.originalTask?.id} className="group flex items-center px-4 py-2.5 border-b border-slate-800/30 hover:bg-slate-800/20 transition-colors pl-4">
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <span className="material-symbols-outlined text-yellow-400 text-[16px] shrink-0">diamond</span>
-                      <span onClick={() => task.originalTask && onStart(task.originalTask)} className="text-sm text-yellow-400 font-medium truncate cursor-pointer hover:underline">{task.name}</span>
+                
+                {group.tasks.map((task) => (
+                  <div key={task.id} className="flex items-center px-6 py-3 border-b border-slate-800/30 hover:bg-slate-800/30 transition-all cursor-pointer group pl-10">
+                    <div className="flex-1 flex flex-col min-w-0">
+                      <span className="text-sm text-slate-300 truncate font-medium group-hover:text-white transition-colors">{task.name}</span>
+                      <span className="text-[10px] text-slate-500 uppercase tracking-tight">{task.originalTask.status}</span>
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                        <button onClick={() => task.originalTask && onUpdate(task.originalTask.id, { status: 'completed' })} className="p-1 hover:bg-green-500/20 text-slate-400 hover:text-green-500 rounded transition-all" title="Complete">
+                        <button onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: 'completed' }); }} className="p-1 px-1.5 hover:bg-green-500/20 text-slate-400 hover:text-green-500 rounded transition-all">
                           <span className="material-symbols-outlined text-[16px]">check</span>
                         </button>
-                        <button onClick={() => task.originalTask && onEdit(task.originalTask)} className="p-1 hover:bg-slate-700 text-slate-400 hover:text-white rounded transition-all" title="Edit">
+                        <button onClick={(e) => { e.stopPropagation(); onEdit(task.originalTask); }} className="p-1 px-1.5 hover:bg-slate-700 text-slate-400 hover:text-white rounded transition-all">
                           <span className="material-symbols-outlined text-[16px]">edit</span>
                         </button>
-                        <button onClick={() => task.originalTask && onDelete(task.originalTask.id)} className="p-1 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded transition-all" title="Delete">
+                        <button onClick={(e) => { e.stopPropagation(); onDelete(task.id); }} className="p-1 px-1.5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded transition-all">
                           <span className="material-symbols-outlined text-[16px]">delete</span>
                         </button>
                     </div>
                   </div>
                 ))}
               </div>
+            ))}
+            
+            {!tasks.length && (
+              <div className="p-10 text-center text-slate-500">
+                <span className="material-symbols-outlined text-4xl mb-4 block opacity-20">inventory_2</span>
+                <p className="text-sm">No tasks found. Create some in the Dashboard!</p>
+              </div>
             )}
-            {/* Add task button */}
-            <div className="flex items-center gap-2 px-4 py-3 text-slate-500 hover:text-primary cursor-pointer transition-colors">
-              <span className="material-symbols-outlined text-[18px]">add</span>
-              <span className="text-sm font-medium">New Task</span>
-            </div>
           </div>
 
           {/* Right Panel: Timeline Grid */}
-          <div className="flex-1 relative">
+          <div className="flex-1 relative bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px)] bg-[size:calc(100%/18)_100%]">
             {/* Date Headers */}
-            <div className="border-b border-slate-800 sticky top-0 bg-background-dark z-10">
-              <div className="flex items-center px-0 py-1 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                <div className="h-6 flex items-center justify-center px-2 col-span-full text-center text-xs text-slate-400">
-                  OCTOBER 2025
-                </div>
-              </div>
-              <div className="flex">
+            <div className="border-b border-slate-800 sticky top-0 bg-background-dark z-30">
+              <div className="flex border-b border-slate-800/30">
                 {days.map((day, i) => (
                   <div
                     key={day}
-                    className={`flex-1 text-center py-2 text-[10px] font-medium border-r border-slate-800/30 ${i === todayIndex ? 'text-primary bg-primary/5' : 'text-slate-500'}`}
+                    className={`flex-1 text-center py-4 text-[10px] font-bold uppercase tracking-widest border-r border-slate-800/30 ${i === todayIndex ? 'text-primary bg-primary/5' : 'text-slate-500'}`}
                   >
                     {day}
                   </div>
@@ -194,52 +196,41 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, onUpdate, onDelet
             </div>
 
             {/* Grid Rows with bars */}
-            <div className="relative">
+            <div className="relative min-h-full">
               {/* Today line */}
               <div
-                className="absolute top-0 bottom-0 w-px bg-primary/50 z-20"
+                className="absolute top-0 bottom-0 w-px bg-primary/30 z-20 pointer-events-none"
                 style={{ left: `${((todayIndex + 0.5) / days.length) * 100}%` }}
               >
-                <div className="w-2 h-2 rounded-full bg-primary -ml-[3px] -mt-1"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-primary -ml-[5px] -mt-1.5 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
               </div>
 
-              {phases.map((phase) => (
-                <div key={phase.phase}>
-                  {/* Phase row */}
-                  <div className="h-10 border-b border-slate-800/30 relative">
-                    <div
-                      className="absolute top-2 h-6 bg-slate-600/40 rounded"
-                      style={{
-                        left: `${(phase.tasks[0].startDay / days.length) * 100}%`,
-                        width: `${((phase.tasks[phase.tasks.length - 1].startDay + phase.tasks[phase.tasks.length - 1].lengthDays - phase.tasks[0].startDay) / days.length) * 100}%`
-                      }}
-                    ></div>
-                  </div>
-                  {/* Task bars */}
-                  {phase.tasks.map((task) => (
-                    <div key={task.name} className="h-10 border-b border-slate-800/30 relative group">
+              {projectGroups.map((group) => (
+                <div key={group.id} className="relative">
+                  {/* Group Container Header row (background only) */}
+                  <div className="h-12 border-b border-slate-800/30 bg-slate-800/5"></div>
+                  
+                  {/* Task rows */}
+                  {group.tasks.map((task) => (
+                    <div key={task.id} className="h-11 border-b border-slate-800/20 relative group hover:bg-white/[0.02] transition-colors">
                       <div
-                        className={`absolute top-2 h-6 ${task.color} rounded shadow-lg cursor-pointer transition-all group-hover:brightness-110 flex items-center px-2`}
+                        onClick={() => onStart(task.originalTask)}
+                        className={`absolute top-2.5 h-6 rounded-lg shadow-lg cursor-pointer transition-all hover:scale-[1.02] active:scale-95 flex items-center px-3 z-10 border border-white/10`}
                         style={{
                           left: `${(task.startDay / days.length) * 100}%`,
-                          width: `${(task.lengthDays / days.length) * 100}%`
+                          width: `${(task.lengthDays / days.length) * 100}%`,
+                          backgroundColor: task.isMilestone ? '#64748b' : group.color
                         }}
                       >
-                        <span className="text-[10px] font-bold text-white truncate">{task.name}</span>
+                        <div className="flex items-center gap-1.5 w-full">
+                          {task.isMilestone && <span className="material-symbols-outlined text-[14px]">diamond</span>}
+                          <span className="text-[10px] font-bold text-white truncate drop-shadow-sm">{task.name}</span>
+                        </div>
+                        {/* Status dot */}
+                        <div className={`absolute -right-1 -top-1 w-2.5 h-2.5 rounded-full border-2 border-background-dark ${task.originalTask.status === 'completed' ? 'bg-green-500' : task.originalTask.status === 'in-progress' ? 'bg-primary' : 'bg-slate-500'}`}></div>
                       </div>
                     </div>
                   ))}
-                </div>
-              ))}
-              {/* Milestone rows */}
-              {realTasksMilestones.map((task) => (
-                <div key={task.name} className="h-10 border-b border-slate-800/30 relative">
-                  <div
-                    className="absolute top-1.5 w-5 h-5 bg-yellow-400 rotate-45 cursor-pointer hover:scale-110 transition-transform shadow-lg"
-                    style={{
-                      left: `${((task.startDay + 0.5) / days.length) * 100}%`,
-                    }}
-                  ></div>
                 </div>
               ))}
             </div>

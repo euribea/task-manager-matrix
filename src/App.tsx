@@ -161,6 +161,47 @@ function App() {
     }
   };
 
+  const handleUpdateProject = async (id: string) => {
+    const project = projects.find(p => p.id === id);
+    if (!project) return;
+    
+    const newName = prompt('Edit Project Name:', project.name);
+    if (!newName || newName === project.name) return;
+
+    try {
+      await updateDoc(doc(db, 'projects', id), {
+        name: newName
+      });
+    } catch (err: any) {
+      console.error("Error updating project: ", err);
+      setError(err.message || 'Error occurred while updating project.');
+    }
+  };
+
+  const handleDeleteProject = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this project? Tasks will remain but without a project assignment.')) return;
+
+    try {
+      // 1. Delete the project
+      await deleteDoc(doc(db, 'projects', id));
+      
+      // 2. Clear projectId for all tasks in this project
+      const projectTasks = tasks.filter(t => t.projectId === id);
+      for (const task of projectTasks) {
+        await updateDoc(doc(db, 'tasks', task.id), {
+          projectId: ''
+        });
+      }
+      
+      if (selectedProjectId === id) {
+        setSelectedProjectId(null);
+      }
+    } catch (err: any) {
+      console.error("Error deleting project: ", err);
+      setError(err.message || 'Error occurred while deleting project.');
+    }
+  };
+
   const handleStartPomodoro = (task: Task) => {
     setActivePomodoroTask(task);
   };
@@ -244,7 +285,7 @@ function App() {
   const renderMainContent = () => {
     switch (currentView) {
       case 'gantt':
-        return <GanttChart tasks={tasks} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onEdit={handleEditTask} onStart={handleStartPomodoro} />;
+        return <GanttChart tasks={tasks} projects={projects} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onEdit={handleEditTask} onStart={handleStartPomodoro} />;
       case 'insights':
         return <InsightsView tasks={tasks} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onEdit={handleEditTask} onStart={handleStartPomodoro} />;
       case 'matrix':
@@ -516,18 +557,42 @@ function App() {
                               <span className="text-sm">All Tasks</span>
                           </button>
                           {projects.map(project => (
-                              <button 
+                              <div 
                                 key={project.id}
-                                onClick={() => setSelectedProjectId(project.id)}
-                                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-left group ${
+                                className={`flex items-center gap-1 group px-1 py-1 rounded-lg transition-all ${
                                   selectedProjectId === project.id
-                                  ? 'bg-primary/10 text-primary font-semibold'
-                                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                                  ? 'bg-primary/10'
+                                  : 'hover:bg-slate-100 dark:hover:bg-surface-lighter'
                                 }`}
                               >
-                                  <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: project.color || '#3b82f6' }}></div>
-                                  <span className="text-sm truncate">{project.name}</span>
-                              </button>
+                                <button 
+                                  onClick={() => setSelectedProjectId(project.id)}
+                                  className={`flex items-center gap-3 px-2 py-1 rounded-lg flex-1 text-left ${
+                                    selectedProjectId === project.id
+                                    ? 'text-primary font-semibold'
+                                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                                  }`}
+                                >
+                                    <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: project.color || '#3b82f6' }}></div>
+                                    <span className="text-sm truncate">{project.name}</span>
+                                </button>
+                                <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <button 
+                                    onClick={() => handleUpdateProject(project.id)}
+                                    className="p-1 text-slate-400 hover:text-primary rounded transition-colors"
+                                    title="Edit Project"
+                                  >
+                                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                                  </button>
+                                  <button 
+                                    onClick={() => handleDeleteProject(project.id)}
+                                    className="p-1 text-slate-400 hover:text-red-500 rounded transition-colors"
+                                    title="Delete Project"
+                                  >
+                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                  </button>
+                                </div>
+                              </div>
                           ))}
                       </div>
                   </div>
