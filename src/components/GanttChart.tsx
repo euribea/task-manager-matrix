@@ -31,9 +31,56 @@ interface ProjectGroup {
 export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdate, onDelete, onEdit, onStart }) => {
   const [viewMode, setViewMode] = useState<'Timeline' | 'Board' | 'List'>('Timeline');
 
-  // Days for the header
-  const days = ['01 Mon', '02 Tue', '03 Wed', '04 Thu', '05 Fri', '06 Sat', '07 Sun', '08 Mon', '09 Tue', '10 Wed', '11 Thu', '12 Fri', '13 Sat', '14 Sun', '15 Mon', '16 Tue', '17 Wed', '18 Thu'];
-  const todayIndex = 4; // Mock today
+  // Dynamic days for the header
+  const chartStartDate = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 3); // Start 3 days ago for better context
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
+  const totalDays = 21; // Display 3 weeks
+
+  const days = useMemo(() => {
+    const list = [];
+    for (let i = 0; i < totalDays; i++) {
+      const d = new Date(chartStartDate);
+      d.setDate(d.getDate() + i);
+      list.push(`${d.getDate().toString().padStart(2, '0')} ${d.toLocaleDateString('en-US', { weekday: 'short' })}`);
+    }
+    return list;
+  }, [chartStartDate]);
+
+  const todayIndex = useMemo(() => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const diff = now.getTime() - chartStartDate.getTime();
+    return diff / (1000 * 60 * 60 * 24);
+  }, [chartStartDate]);
+
+  const getChartPosition = (startDate: any, endDate: any, index: number) => {
+    if (!startDate || !endDate) {
+        return {
+            startDay: (index % 5) + 2,
+            lengthDays: 2
+        };
+    }
+    
+    const s = startDate.seconds ? new Date(startDate.seconds * 1000) : new Date(startDate);
+    const e = endDate.seconds ? new Date(endDate.seconds * 1000) : new Date(endDate);
+    
+    // Reset hours to normalize day calculation
+    s.setHours(0,0,0,0);
+    e.setHours(0,0,0,0);
+    
+    const diffStart = s.getTime() - chartStartDate.getTime();
+    const startDay = diffStart / (1000 * 60 * 60 * 24);
+    
+    const diffDuration = e.getTime() - s.getTime();
+    const lengthDays = Math.max(1, diffDuration / (1000 * 60 * 60 * 24) + 1); // +1 to include the end day
+    
+    return { startDay, lengthDays };
+  };
 
   const projectGroups = useMemo(() => {
     const groups: ProjectGroup[] = [];
@@ -47,18 +94,15 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
           name: project.name,
           color: project.color || '#3b82f6',
           tasks: projectTasks.map((t, index) => {
-            // Logic to spread tasks in the timeline if no dates are set
-            // In a real app, this would use t.startDate and t.dueDate
-            const startDay = index % 10;
-            const lengthDays = 2 + (index % 5);
+            const { startDay, lengthDays } = getChartPosition(t.startDate, t.dueDate, index);
             
             return {
               id: t.id,
               name: t.title,
-              duration: `${lengthDays} days`,
+              duration: `${Math.ceil(lengthDays)} días`,
               startDay,
               lengthDays,
-              color: `bg-[${project.color}]` || 'bg-primary',
+              color: project.color || '#3b82f6',
               originalTask: t
             };
           })
@@ -180,7 +224,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
           </div>
 
           {/* Right Panel: Timeline Grid */}
-          <div className="flex-1 relative bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px)] bg-[size:calc(100%/18)_100%]">
+          <div className="flex-1 relative bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px)]" style={{ backgroundSize: `calc(100% / ${days.length}) 100%` }}>
             {/* Date Headers */}
             <div className="border-b border-slate-800 sticky top-0 bg-background-dark z-30">
               <div className="flex border-b border-slate-800/30">
@@ -204,11 +248,32 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
               >
                 <div className="w-2.5 h-2.5 rounded-full bg-primary -ml-[5px] -mt-1.5 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
               </div>
-
               {projectGroups.map((group) => (
                 <div key={group.id} className="relative">
-                  {/* Group Container Header row (background only) */}
-                  <div className="h-12 border-b border-slate-800/30 bg-slate-800/5"></div>
+                  {/* Project Summary Bar in Header */}
+                  <div className="h-12 border-b border-slate-800/30 bg-slate-800/5 relative">
+                    {(() => {
+                      const project = projects.find(p => p.id === group.id);
+                      if (project?.startDate && project?.endDate) {
+                        const { startDay, lengthDays } = getChartPosition(project.startDate, project.endDate, 0);
+                        return (
+                          <div 
+                            className="absolute top-3 h-6 rounded-md opacity-40 border border-white/10"
+                            style={{
+                              left: `${(startDay / days.length) * 100}%`,
+                              width: `${(lengthDays / days.length) * 100}%`,
+                              backgroundColor: group.color
+                            }}
+                          >
+                             <div className="px-2 text-[9px] font-bold text-white uppercase truncate flex items-center h-full">
+                               {project.name}
+                             </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
+                  </div>
                   
                   {/* Task rows */}
                   {group.tasks.map((task) => (

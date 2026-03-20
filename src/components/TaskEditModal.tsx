@@ -18,6 +18,8 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({ task, isOpen, proj
   const [projectId, setProjectId] = useState('');
   const [log, setLog] = useState<TaskLogEntry[]>([]);
   const [logInput, setLogInput] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [dueDate, setDueDate] = useState('');
 
   useEffect(() => {
     if (task) {
@@ -28,6 +30,16 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({ task, isOpen, proj
       setStatus(task.status || 'Pendiente');
       setProjectId(task.projectId || '');
       setLog(task.log || []);
+      
+      // Helper to format Date/Timestamp to YYYY-MM-DD
+      const formatDate = (val: any) => {
+        if (!val) return '';
+        const d = val.seconds ? new Date(val.seconds * 1000) : new Date(val);
+        return d.toISOString().split('T')[0];
+      };
+      
+      setStartDate(formatDate(task.startDate));
+      setDueDate(formatDate(task.dueDate));
     }
   }, [task]);
 
@@ -61,7 +73,9 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({ task, isOpen, proj
       isImportant,
       status,
       projectId,
-      log
+      log,
+      startDate,
+      dueDate
     });
     onClose();
   };
@@ -202,6 +216,33 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({ task, isOpen, proj
                 <option key={p.id} value={p.id}>{p.name}</option>
               ))}
             </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-2 p-4 bg-slate-50 dark:bg-[#1e2636] border border-slate-200 dark:border-slate-700 rounded-xl transition-colors">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px]">calendar_today</span>
+                Fecha Inicio
+              </label>
+              <input 
+                type="date" 
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="bg-transparent border-none text-sm text-slate-900 dark:text-white focus:ring-0 outline-none w-full"
+              />
+            </div>
+            <div className="flex flex-col gap-2 p-4 bg-slate-50 dark:bg-[#1e2636] border border-slate-200 dark:border-slate-700 rounded-xl transition-colors">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px]">event</span>
+                Fecha Término
+              </label>
+              <input 
+                type="date" 
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="bg-transparent border-none text-sm text-slate-900 dark:text-white focus:ring-0 outline-none w-full"
+              />
+            </div>
           </div>
 
           <div className="flex items-center justify-end gap-3 mt-4">

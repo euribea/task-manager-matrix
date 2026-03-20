@@ -9,6 +9,7 @@ import { GanttChart } from './components/GanttChart';
 import { InsightsView } from './components/InsightsView';
 import { TaskMatrix } from './components/TaskMatrix';
 import { TaskEditModal } from './components/TaskEditModal';
+import { ProjectEditModal } from './components/ProjectEditModal';
 import { SettingsView } from './components/SettingsView';
 
 type ViewMode = 'dashboard' | 'tasks' | 'gantt' | 'matrix' | 'insights' | 'pomodoro' | 'settings';
@@ -22,8 +23,11 @@ function App() {
   const [currentView, setCurrentView] = useState<ViewMode>('dashboard');
   
   const [activePomodoroTask, setActivePomodoroTask] = useState<Task | null>(null);
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
+   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
 
   // App Customization State
   const [appName, setAppName] = useState(() => localStorage.getItem('appName') || 'TaskMaster');
@@ -164,14 +168,15 @@ function App() {
   const handleUpdateProject = async (id: string) => {
     const project = projects.find(p => p.id === id);
     if (!project) return;
-    
-    const newName = prompt('Edit Project Name:', project.name);
-    if (!newName || newName === project.name) return;
+    setEditingProject(project);
+    setIsProjectModalOpen(true);
+  };
 
+  const handleSaveProject = async (id: string, updates: Partial<Project>) => {
     try {
-      await updateDoc(doc(db, 'projects', id), {
-        name: newName
-      });
+      await updateDoc(doc(db, 'projects', id), updates);
+      setIsProjectModalOpen(false);
+      setEditingProject(null);
     } catch (err: any) {
       console.error("Error updating project: ", err);
       setError(err.message || 'Error occurred while updating project.');
@@ -642,6 +647,15 @@ function App() {
         projects={projects}
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleUpdateTask}
+      />
+      <ProjectEditModal
+        project={editingProject}
+        isOpen={isProjectModalOpen}
+        onClose={() => {
+          setIsProjectModalOpen(false);
+          setEditingProject(null);
+        }}
+        onSave={handleSaveProject}
       />
     </div>
   );

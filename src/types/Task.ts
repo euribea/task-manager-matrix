@@ -9,6 +9,8 @@ export interface Project {
   color?: string; // For visual grouping
   userId?: string;
   createdAt?: any;
+  startDate?: any;
+  endDate?: any;
 }
 
 export interface Task {
