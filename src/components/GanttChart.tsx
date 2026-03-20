@@ -87,7 +87,9 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
 
     // Add each project's tasks
     projects.forEach(project => {
-      const projectTasks = tasks.filter(t => t.projectId === project.id);
+      // Solo incluimos tareas que tengan AMBAS fechas definidas
+      const projectTasks = tasks.filter(t => t.projectId === project.id && t.startDate && t.dueDate);
+      
       if (projectTasks.length > 0) {
         groups.push({
           id: project.id,
@@ -110,23 +112,26 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
       }
     });
 
-    // Add tasks with no project
-    const orphanTasks = tasks.filter(t => !t.projectId);
+    // Add tasks with no project, also only with dates
+    const orphanTasks = tasks.filter(t => !t.projectId && t.startDate && t.dueDate);
     if (orphanTasks.length > 0) {
       groups.push({
         id: 'no-project',
         name: 'Uncategorized Tasks',
         color: '#64748b',
-        tasks: orphanTasks.map((t, index) => ({
-          id: t.id,
-          name: t.title,
-          duration: '1 day',
-          startDay: 10 + (index % 5),
-          lengthDays: 1,
-          color: 'bg-slate-500',
-          isMilestone: true,
-          originalTask: t
-        }))
+        tasks: orphanTasks.map((t, index) => {
+          const { startDay, lengthDays } = getChartPosition(t.startDate, t.dueDate, index);
+          return {
+            id: t.id,
+            name: t.title,
+            duration: `${Math.ceil(lengthDays)} días`,
+            startDay,
+            lengthDays,
+            color: '#64748b',
+            isMilestone: true,
+            originalTask: t
+          };
+        })
       });
     }
 
@@ -215,10 +220,11 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
               </div>
             ))}
             
-            {!tasks.length && (
+            {!projectGroups.length && (
               <div className="p-10 text-center text-slate-500">
-                <span className="material-symbols-outlined text-4xl mb-4 block opacity-20">inventory_2</span>
-                <p className="text-sm">No tasks found. Create some in the Dashboard!</p>
+                <span className="material-symbols-outlined text-4xl mb-4 block opacity-20">event_busy</span>
+                <p className="text-sm">No hay tareas con fechas definidas.</p>
+                <p className="text-[10px] uppercase mt-2 opacity-60">Asigna fechas de inicio y término en la edición de tareas para visualizarlas en el Gantt.</p>
               </div>
             )}
           </div>
