@@ -619,14 +619,19 @@ function App() {
               </div>
               {/* Bottom Actions */}
               <div className="flex flex-col gap-2 mt-auto">
-                  {/* Storage indicator */}
-                  <div className="px-3 py-4 rounded-xl bg-slate-100 dark:bg-surface-lighter/50 border border-slate-200 dark:border-slate-700/50 transition-colors">
-                      <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Storage</span>
-                          <span className="text-xs font-medium text-primary">75%</span>
+                  {/* User Profile Card */}
+                  <div className="px-3 py-4 rounded-xl bg-slate-100 dark:bg-surface-lighter/30 border border-slate-200 dark:border-slate-700/50 flex items-center gap-3 transition-all hover:bg-slate-200 dark:hover:bg-surface-lighter/50 group cursor-default">
+                      <div className="relative shrink-0">
+                        <img 
+                          src={userAvatar} 
+                          alt={userName} 
+                          className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-slate-800 shadow-sm transition-transform group-hover:scale-105" 
+                        />
+                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
                       </div>
-                      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 transition-colors">
-                          <div className="bg-primary h-1.5 rounded-full" style={{ width: '75%' }}></div>
+                      <div className="flex flex-col min-w-0">
+                          <span className="text-sm font-bold text-slate-900 dark:text-white truncate leading-none mb-1">{userName}</span>
+                          <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate opacity-80">{userEmail}</span>
                       </div>
                   </div>
                   {/* Settings */}
