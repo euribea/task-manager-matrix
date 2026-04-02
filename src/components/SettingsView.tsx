@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface SettingsViewProps {
   appName: string;
@@ -7,6 +7,12 @@ interface SettingsViewProps {
   setAppIcon: (icon: string) => void;
   theme: 'dark' | 'light';
   setTheme: (theme: 'dark' | 'light') => void;
+  userName: string;
+  setUserName: (name: string) => void;
+  userEmail: string;
+  setUserEmail: (email: string) => void;
+  userAvatar: string;
+  setUserAvatar: (avatar: string) => void;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
@@ -15,12 +21,37 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   appIcon,
   setAppIcon,
   theme,
-  setTheme
+  setTheme,
+  userName,
+  setUserName,
+  userEmail,
+  setUserEmail,
+  userAvatar,
+  setUserAvatar
 }) => {
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [tempName, setTempName] = useState(userName);
+  const [tempEmail, setTempEmail] = useState(userEmail);
+  const [tempAvatar, setTempAvatar] = useState(userAvatar);
+
   const icons = [
     'task_alt', 'dashboard', 'timer', 'insights', 'grid_view', 
     'rocket_launch', 'bolt', 'auto_awesome', 'edit_square', 'star'
   ];
+
+  const handleSaveProfile = () => {
+    setUserName(tempName);
+    setUserEmail(tempEmail);
+    setUserAvatar(tempAvatar);
+    setIsEditingProfile(false);
+  };
+
+  const handleCancelEdit = () => {
+    setTempName(userName);
+    setTempEmail(userEmail);
+    setTempAvatar(userAvatar);
+    setIsEditingProfile(false);
+  };
 
   return (
     <div className="flex flex-col h-full overflow-y-auto bg-background-light dark:bg-background-dark transition-colors">
@@ -111,17 +142,79 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <span className="material-symbols-outlined text-primary">person</span>
               Identity
             </h3>
-            <div className="bg-white dark:bg-surface-lighter rounded-xl border border-slate-200 dark:border-slate-700/50 p-6 flex items-center gap-4 shadow-sm transition-colors">
-              <div className="size-16 rounded-full bg-slate-100 dark:bg-slate-700 border-2 border-primary/30 flex items-center justify-center overflow-hidden transition-colors">
-                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZrdP5MAjj26HGZUu0ZifL0ziDdIRAq4AgApnOUo2DTA7A0d0HIzoXu80SqjupW3jxaNhE0Jj4PthIE-Xl-goB6q7bvU-lq_ntXGW_b5UOUF4CtrT7Nq77tMxgwkvOhaPnZa8w7oakTAMdaJIV1vWUDqow8FcQncoJAOK6VuQlr6XbMBFFM5DHmDwOxrHphvF9sUTKNUrRukNS4WRRapBDBzP59ymfZZwmS3KQEGKoen1MNUng9l_mFidvmeJkrLYIQMGajRmtELc" alt="Profile" className="size-full object-cover" />
-              </div>
-              <div className="flex-1">
-                <p className="text-lg font-bold text-slate-900 dark:text-white leading-tight">Alex Rivera</p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">alex.rivera@example.com</p>
-              </div>
-              <button className="px-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold text-slate-700 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                Edit Profile
-              </button>
+            <div className="bg-white dark:bg-surface-lighter rounded-xl border border-slate-200 dark:border-slate-700/50 p-6 flex flex-col gap-6 shadow-sm transition-colors">
+              {!isEditingProfile ? (
+                 <div className="flex items-center gap-4">
+                  <div className="size-16 rounded-full bg-slate-100 dark:bg-slate-700 border-2 border-primary/30 flex items-center justify-center overflow-hidden transition-colors">
+                    <img src={userAvatar} alt="Profile" className="size-full object-cover" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-lg font-bold text-slate-900 dark:text-white leading-tight">{userName}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{userEmail}</p>
+                  </div>
+                  <button 
+                    onClick={() => setIsEditingProfile(true)}
+                    className="px-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold text-slate-700 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                  >
+                    Edit Profile
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center gap-6">
+                    <div className="relative group">
+                      <div className="size-20 rounded-full bg-slate-100 dark:bg-slate-700 border-2 border-primary overflow-hidden transition-colors">
+                        <img src={tempAvatar} alt="Profile" className="size-full object-cover" />
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const newAvatar = prompt('Enter a new image URL:', tempAvatar);
+                          if (newAvatar) setTempAvatar(newAvatar);
+                        }}
+                        className="absolute bottom-0 right-0 p-1.5 bg-primary text-white rounded-full border-2 border-white dark:border-[#1a2233] shadow-lg hover:scale-110 transition-transform"
+                      >
+                         <span className="material-symbols-outlined text-[16px]">edit</span>
+                      </button>
+                    </div>
+                    
+                    <div className="flex-1 flex flex-col gap-3">
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block">Display Name</label>
+                        <input 
+                          type="text" 
+                          value={tempName}
+                          onChange={(e) => setTempName(e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block">Email Address</label>
+                        <input 
+                          type="email" 
+                          value={tempEmail}
+                          onChange={(e) => setTempEmail(e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-200 dark:border-slate-700/50">
+                    <button 
+                      onClick={handleCancelEdit}
+                      className="px-4 py-2 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      onClick={handleSaveProfile}
+                      className="px-6 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-95"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </section>
 

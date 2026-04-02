@@ -35,6 +35,9 @@ function App() {
   const [appName, setAppName] = useState(() => localStorage.getItem('appName') || 'TaskMaster');
   const [appIcon, setAppIcon] = useState(() => localStorage.getItem('appIcon') || 'task_alt');
   const [theme, setTheme] = useState<'dark' | 'light'>(() => (localStorage.getItem('theme') as 'dark' | 'light') || 'dark');
+  const [userName, setUserName] = useState(() => localStorage.getItem('userName') || 'Alex Rivera');
+  const [userEmail, setUserEmail] = useState(() => localStorage.getItem('userEmail') || 'alex.rivera@example.com');
+  const [userAvatar, setUserAvatar] = useState(() => localStorage.getItem('userAvatar') || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150');
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -52,6 +55,18 @@ function App() {
   useEffect(() => {
     localStorage.setItem('appIcon', appIcon);
   }, [appIcon]);
+
+  useEffect(() => {
+    localStorage.setItem('userName', userName);
+  }, [userName]);
+
+  useEffect(() => {
+    localStorage.setItem('userEmail', userEmail);
+  }, [userEmail]);
+
+  useEffect(() => {
+    localStorage.setItem('userAvatar', userAvatar);
+  }, [userAvatar]);
 
   useEffect(() => {
     // Fetcch Projects
@@ -310,6 +325,12 @@ function App() {
             setAppIcon={setAppIcon} 
             theme={theme} 
             setTheme={setTheme} 
+            userName={userName}
+            setUserName={setUserName}
+            userEmail={userEmail}
+            setUserEmail={setUserEmail}
+            userAvatar={userAvatar}
+            setUserAvatar={setUserAvatar}
           />
         );
       case 'tasks':
@@ -321,7 +342,7 @@ function App() {
             <header className="h-20 shrink-0 px-6 md:px-10 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-background-dark/95 backdrop-blur z-10 transition-colors">
                 <div className="flex flex-col">
                     <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-                      {currentView === 'tasks' ? 'My Tasks' : `Good morning, Alex`}
+                      {currentView === 'tasks' ? 'My Tasks' : `Good morning, ${userName.split(' ')[0]}`}
                     </h2>
                     {currentView === 'dashboard' && (
                       <p className="text-sm text-slate-400">{dateString}</p>
