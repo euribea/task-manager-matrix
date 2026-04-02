@@ -29,7 +29,7 @@ export const TaskList: React.FC<TaskListProps> = ({ tasks, onUpdate, onDelete, o
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold text-white flex items-center gap-2">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <span className="material-symbols-outlined text-primary">target</span>
               Today's Focus
           </h3>

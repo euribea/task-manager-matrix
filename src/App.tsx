@@ -235,10 +235,10 @@ function App() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background-dark text-white">
+      <div className="flex h-screen items-center justify-center bg-white dark:bg-background-dark text-slate-900 dark:text-white transition-colors">
         <div className="flex flex-col items-center">
             <span className="material-symbols-outlined text-4xl animate-spin text-primary">autorenew</span>
-            <p className="mt-4 text-slate-400">Loading your focus dashboard...</p>
+            <p className="mt-4 text-slate-500 dark:text-slate-400">Loading your focus dashboard...</p>
         </div>
       </div>
     );
@@ -247,7 +247,7 @@ function App() {
   // If we have an active pomodoro task, render ONLY the Timer View
   if (activePomodoroTask) {
     return (
-      <div className="flex flex-col relative h-screen w-full overflow-hidden bg-background-dark text-slate-100 font-display">
+      <div className="flex flex-col relative h-screen w-full overflow-hidden bg-white dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display transition-colors">
          <Timer task={activePomodoroTask} onExit={() => setActivePomodoroTask(null)} onEdit={() => handleEditTask(activePomodoroTask)} />
          {/* Edit Modal for Pomodoro View */}
          <TaskEditModal 

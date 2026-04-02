@@ -139,40 +139,40 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
   }, [tasks, projects]);
 
   return (
-    <div className="flex flex-col h-full bg-background-dark text-slate-100 font-display">
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display transition-colors">
       {/* Top Navigation Bar */}
-      <header className="shrink-0 px-6 md:px-10 py-4 flex items-center justify-between border-b border-slate-800 bg-background-dark/95 backdrop-blur z-10">
+      <header className="shrink-0 px-6 md:px-10 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-background-dark/95 backdrop-blur z-10">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-400">
+          <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
             <span className="material-symbols-outlined text-primary">account_tree</span>
-            <span className="text-white font-semibold">Project Roadmap</span>
+            <span className="text-slate-900 dark:text-white font-semibold">Project Roadmap</span>
             <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-bold ml-2">Real-time</span>
           </div>
         </div>
       </header>
 
       {/* View Toggles & Actions */}
-      <div className="shrink-0 px-6 md:px-10 py-3 flex items-center justify-between border-b border-slate-800">
-        <div className="flex p-1 bg-slate-800/50 rounded-lg">
+      <div className="shrink-0 px-6 md:px-10 py-3 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-transparent">
+        <div className="flex p-1 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg">
           {(['Timeline', 'Board', 'List'] as const).map((v) => (
             <button
               key={v}
               onClick={() => setViewMode(v)}
-              className={`px-4 py-1.5 rounded-md text-sm transition-all ${viewMode === v ? 'bg-primary text-white font-bold shadow-sm' : 'text-slate-400 hover:text-white'}`}
+              className={`px-4 py-1.5 rounded-md text-sm transition-all ${viewMode === v ? 'bg-primary text-white font-bold shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
             >
               {v}
             </button>
           ))}
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors">
+          <button className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
             <span className="material-symbols-outlined text-[18px]">filter_list</span>
             Filter
           </button>
-          <div className="flex items-center gap-1 bg-slate-800/50 rounded-lg px-3 py-1.5">
-            <span className="text-sm text-white font-medium">Today</span>
+          <div className="flex items-center gap-1 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg px-3 py-1.5">
+            <span className="text-sm text-slate-900 dark:text-white font-medium">Today</span>
           </div>
-          <span className="text-sm text-slate-400 font-medium">{new Date().toLocaleString('default', { month: 'long', year: 'numeric' }).toUpperCase()}</span>
+          <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{new Date().toLocaleString('default', { month: 'long', year: 'numeric' }).toUpperCase()}</span>
           <button className="hidden md:flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-primary/25 transition-all">
             <span className="material-symbols-outlined text-[18px]">add</span>
             Add Task
@@ -184,25 +184,25 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
       <div className="flex-1 overflow-auto scrollbar-hide">
         <div className="flex min-w-[1200px] h-full">
           {/* Left Panel: Task List */}
-          <div className="w-80 shrink-0 border-r border-slate-800 bg-background-dark/50 overflow-y-auto">
-            <div className="flex items-center px-6 py-4 border-b border-slate-800 sticky top-0 bg-background-dark z-20">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex-1">Project / Task</span>
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider w-20 text-right">Time</span>
+          <div className="w-80 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-background-dark/50 overflow-y-auto">
+            <div className="flex items-center px-6 py-4 border-b border-slate-200 dark:border-slate-800 sticky top-0 bg-white dark:bg-background-dark z-20">
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex-1">Project / Task</span>
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider w-20 text-right">Time</span>
             </div>
             
             {projectGroups.map((group) => (
-              <div key={group.id} className="border-b border-slate-800/50">
-                <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/20 group hover:bg-slate-800/40 transition-colors">
+              <div key={group.id} className="border-b border-slate-200/50 dark:border-slate-800/50">
+                <div className="flex items-center gap-3 px-4 py-3 bg-slate-100/50 dark:bg-slate-800/20 group hover:bg-slate-200/50 dark:hover:bg-slate-800/40 transition-colors">
                   <div className="w-1 h-6 rounded-full" style={{ backgroundColor: group.color }}></div>
-                  <span className="text-sm font-bold text-white flex-1 truncate">{group.name}</span>
-                  <span className="text-[10px] font-bold text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">{group.tasks.length} tasks</span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white flex-1 truncate">{group.name}</span>
+                  <span className="text-[10px] font-bold text-slate-500 bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded-full">{group.tasks.length} tasks</span>
                 </div>
                 
                 {group.tasks.map((task) => (
-                  <div key={task.id} className="flex items-center px-6 py-3 border-b border-slate-800/30 hover:bg-slate-800/30 transition-all cursor-pointer group pl-10">
+                  <div key={task.id} className="flex items-center px-6 py-3 border-b border-slate-100 dark:border-slate-800/30 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all cursor-pointer group pl-10">
                     <div className="flex-1 flex flex-col min-w-0">
-                      <span className="text-sm text-slate-300 truncate font-medium group-hover:text-white transition-colors">{task.name}</span>
-                      <span className="text-[10px] text-slate-500 uppercase tracking-tight">{task.originalTask.status}</span>
+                      <span className="text-sm text-slate-700 dark:text-slate-300 truncate font-medium group-hover:text-primary dark:group-hover:text-white transition-colors">{task.name}</span>
+                      <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-tight">{task.originalTask.status}</span>
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
                         <button onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: 'completed' }); }} className="p-1 px-1.5 hover:bg-green-500/20 text-slate-400 hover:text-green-500 rounded transition-all">
@@ -230,14 +230,14 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
           </div>
 
           {/* Right Panel: Timeline Grid */}
-          <div className="flex-1 relative bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px)]" style={{ backgroundSize: `calc(100% / ${days.length}) 100%` }}>
+          <div className="flex-1 relative bg-[linear-gradient(to_right,var(--grid-color)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px)] [--grid-color:#e2e8f0] dark:[--grid-color:#1e293b]" style={{ backgroundSize: `calc(100% / ${days.length}) 100%` }}>
             {/* Date Headers */}
-            <div className="border-b border-slate-800 sticky top-0 bg-background-dark z-30">
-              <div className="flex border-b border-slate-800/30">
+            <div className="border-b border-slate-200 dark:border-slate-800 sticky top-0 bg-white dark:bg-background-dark z-30">
+              <div className="flex border-b border-slate-200 dark:border-slate-800/30">
                 {days.map((day, i) => (
                   <div
                     key={day}
-                    className={`flex-1 text-center py-4 text-[10px] font-bold uppercase tracking-widest border-r border-slate-800/30 ${i === todayIndex ? 'text-primary bg-primary/5' : 'text-slate-500'}`}
+                    className={`flex-1 text-center py-4 text-[10px] font-bold uppercase tracking-widest border-r border-slate-200 dark:border-slate-800/30 ${i === todayIndex ? 'text-primary bg-primary/5' : 'text-slate-400 dark:text-slate-500'}`}
                   >
                     {day}
                   </div>
@@ -257,7 +257,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
               {projectGroups.map((group) => (
                 <div key={group.id} className="relative">
                   {/* Project Summary Bar in Header */}
-                  <div className="h-12 border-b border-slate-800/30 bg-slate-800/5 relative">
+                  <div className="h-12 border-b border-slate-200/50 dark:border-slate-800/30 bg-slate-100/30 dark:bg-slate-800/5 relative">
                     {(() => {
                       const project = projects.find(p => p.id === group.id);
                       if (project?.startDate && project?.endDate) {
@@ -283,7 +283,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
                   
                   {/* Task rows */}
                   {group.tasks.map((task) => (
-                    <div key={task.id} className="h-11 border-b border-slate-800/20 relative group hover:bg-white/[0.02] transition-colors">
+                    <div key={task.id} className="h-11 border-b border-slate-100 dark:border-slate-800/20 relative group hover:bg-slate-200/10 dark:hover:bg-white/[0.02] transition-colors">
                       <div
                         onClick={() => onStart(task.originalTask)}
                         className={`absolute top-2.5 h-6 rounded-lg shadow-lg cursor-pointer transition-all hover:scale-[1.02] active:scale-95 flex items-center px-3 z-10 border border-white/10`}
@@ -298,7 +298,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
                           <span className="text-[10px] font-bold text-white truncate drop-shadow-sm">{task.name}</span>
                         </div>
                         {/* Status dot */}
-                        <div className={`absolute -right-1 -top-1 w-2.5 h-2.5 rounded-full border-2 border-background-dark ${task.originalTask.status === 'completed' ? 'bg-green-500' : task.originalTask.status === 'in-progress' ? 'bg-primary' : 'bg-slate-500'}`}></div>
+                        <div className={`absolute -right-1 -top-1 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-background-dark ${task.originalTask.status === 'completed' ? 'bg-green-500' : task.originalTask.status === 'in-progress' ? 'bg-primary' : 'bg-slate-500'}`}></div>
                       </div>
                     </div>
                   ))}

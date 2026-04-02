@@ -18,7 +18,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onUpdate, onDelete, on
 
   if (isActive) {
     return (
-      <div className="bg-white dark:bg-gradient-to-br dark:from-surface-lighter dark:to-[#1e2636] p-6 rounded-2xl border border-slate-200 dark:border-primary/40 shadow-xl shadow-primary/5 relative overflow-hidden group transition-colors">
+      <div className="bg-slate-50 dark:bg-surface-lighter p-6 rounded-2xl border border-slate-200 dark:border-primary/40 shadow-xl shadow-primary/5 relative overflow-hidden group transition-colors">
           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
               <span className="material-symbols-outlined text-9xl text-slate-400 dark:text-white transform rotate-12">timer</span>
           </div>
