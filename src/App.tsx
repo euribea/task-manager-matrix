@@ -28,6 +28,8 @@ function App() {
   
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  
+  const [searchQuery, setSearchQuery] = useState('');
 
   // App Customization State
   const [appName, setAppName] = useState(() => localStorage.getItem('appName') || 'TaskMaster');
@@ -251,10 +253,14 @@ function App() {
     );
   }
 
-  // Filter tasks by selected project
-  const filteredTasks = selectedProjectId 
-    ? tasks.filter(t => t.projectId === selectedProjectId)
-    : tasks;
+  // Filter tasks by selected project and search query
+  const filteredTasks = tasks.filter(t => {
+    const matchesProject = !selectedProjectId || t.projectId === selectedProjectId;
+    const matchesSearch = !searchQuery || 
+      t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      (t.description && t.description.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesProject && matchesSearch;
+  });
 
   // Dashboard stats
   const completedCount = filteredTasks.filter(t => t.status === 'completed').length;
@@ -290,11 +296,11 @@ function App() {
   const renderMainContent = () => {
     switch (currentView) {
       case 'gantt':
-        return <GanttChart tasks={tasks} projects={projects} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onEdit={handleEditTask} onStart={handleStartPomodoro} />;
+        return <GanttChart tasks={filteredTasks} projects={projects} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onEdit={handleEditTask} onStart={handleStartPomodoro} />;
       case 'insights':
-        return <InsightsView tasks={tasks} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onEdit={handleEditTask} onStart={handleStartPomodoro} />;
+        return <InsightsView tasks={filteredTasks} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onEdit={handleEditTask} onStart={handleStartPomodoro} />;
       case 'matrix':
-        return <TaskMatrix tasks={tasks} onStart={handleStartPomodoro} onEdit={handleEditTask} onDelete={handleDeleteTask} onUpdate={handleUpdateTask} />;
+        return <TaskMatrix tasks={filteredTasks} onStart={handleStartPomodoro} onEdit={handleEditTask} onDelete={handleDeleteTask} onUpdate={handleUpdateTask} />;
       case 'settings':
         return (
           <SettingsView 
@@ -325,7 +331,21 @@ function App() {
                 <div className="flex items-center gap-4 md:gap-6">
                   <div className="hidden md:flex items-center bg-surface-lighter rounded-lg px-3 py-2 w-64 border border-slate-700 focus-within:border-primary transition-colors">
                       <span className="material-symbols-outlined text-slate-400 text-[20px]">search</span>
-                      <input className="bg-transparent border-none text-sm text-white placeholder-slate-400 focus:ring-0 w-full ml-2 p-0 outline-none" placeholder="Search tasks..." type="text"/>
+                      <input 
+                        className="bg-transparent border-none text-sm text-white placeholder-slate-400 focus:ring-0 w-full ml-2 p-0 outline-none" 
+                        placeholder="Search tasks..." 
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                      {searchQuery && (
+                        <button 
+                          onClick={() => setSearchQuery('')}
+                          className="p-1 hover:text-white text-slate-500 transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">close</span>
+                        </button>
+                      )}
                   </div>
                   {/* Notification bell */}
                   <button className="relative p-2 text-slate-400 hover:text-white transition-colors rounded-full hover:bg-surface-lighter">
@@ -396,7 +416,7 @@ function App() {
                         {/* Left Area Layout (Active/pending tasks) */}
                         <div className="lg:col-span-2 flex flex-col gap-6 border-slate-800">
                           <TaskList 
-                            tasks={tasks} 
+                            tasks={filteredTasks} 
                             onUpdate={handleUpdateTask} 
                             onDelete={handleDeleteTask} 
                             onEdit={handleEditTask}
