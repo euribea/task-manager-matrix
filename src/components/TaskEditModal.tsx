@@ -35,15 +35,32 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({ task, isOpen, proj
       const formatDate = (val: any) => {
         if (!val) return '';
         const d = val.seconds ? new Date(val.seconds * 1000) : new Date(val);
-        return d.toISOString().split('T')[0];
+        try {
+          return d.toISOString().split('T')[0];
+        } catch (e) {
+          return '';
+        }
       };
       
       setStartDate(formatDate(task.startDate));
       setDueDate(formatDate(task.dueDate));
+    } else {
+      // Reset for new task
+      setTitle('');
+      setNotes('');
+      setIsUrgent(false);
+      setIsImportant(false);
+      setStatus('Pendiente');
+      setProjectId('');
+      setLog([]);
+      setStartDate('');
+      setDueDate('');
     }
   }, [task]);
 
   if (!isOpen || !task) return null;
+
+  const isNewTask = !task.id;
 
   const handleAddLogEntry = () => {
     if (!logInput.trim()) return;
@@ -85,8 +102,8 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({ task, isOpen, proj
       <div className="bg-white dark:bg-surface-lighter border border-slate-200 dark:border-slate-700 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 transition-colors">
         <header className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 transition-colors">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary">edit</span>
-            Edit Task
+            <span className="material-symbols-outlined text-primary">{isNewTask ? 'add_task' : 'edit'}</span>
+            {isNewTask ? 'New Task' : 'Edit Task'}
           </h3>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
             <span className="material-symbols-outlined">close</span>
@@ -257,7 +274,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({ task, isOpen, proj
               type="submit"
               className="px-8 py-2.5 rounded-xl bg-primary hover:bg-blue-600 text-white font-bold shadow-lg shadow-primary/20 transition-all transform active:scale-95"
             >
-              Save Changes
+              {isNewTask ? 'Create Task' : 'Save Changes'}
             </button>
           </div>
         </form>

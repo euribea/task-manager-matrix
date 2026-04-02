@@ -8,6 +8,7 @@ interface GanttChartProps {
   onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
   onStart: (task: Task) => void;
+  onAdd: (defaults?: Partial<Task>) => void;
 }
 
 interface GanttTask {
@@ -28,7 +29,7 @@ interface ProjectGroup {
   tasks: GanttTask[];
 }
 
-export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdate, onDelete, onEdit, onStart }) => {
+export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdate, onDelete, onEdit, onStart, onAdd }) => {
   const [viewMode, setViewMode] = useState<'Timeline' | 'Board' | 'List'>('Timeline');
 
   // Dynamic days for the header
@@ -173,7 +174,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({ tasks, projects, onUpdat
             <span className="text-sm text-slate-900 dark:text-white font-medium">Today</span>
           </div>
           <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{new Date().toLocaleString('default', { month: 'long', year: 'numeric' }).toUpperCase()}</span>
-          <button className="hidden md:flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-primary/25 transition-all">
+          <button onClick={() => onAdd()} className="hidden md:flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-primary/25 transition-all">
             <span className="material-symbols-outlined text-[18px]">add</span>
             Add Task
           </button>

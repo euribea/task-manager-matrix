@@ -6,6 +6,7 @@ interface TaskMatrixProps {
   onUpdate: (id: string, updates: Partial<Task>) => void;
   onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
+  onAdd: (defaults?: Partial<Task>) => void;
 }
 
 interface MatrixTask {
@@ -15,7 +16,7 @@ interface MatrixTask {
   quadrantId: 1 | 2 | 3 | 4;
 }
 
-export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate, onDelete, onEdit }) => {
+export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate, onDelete, onEdit, onAdd }) => {
   // Distribute real tasks + demo data across the 4 quadrants
   // Distribute real tasks across the 4 quadrants
   const pendingTasks = tasks.filter(t => t.status !== 'completed');
@@ -58,7 +59,8 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
     onUpdate, 
     onDelete, 
     onEdit, 
-    onStart 
+    onStart,
+    onAdd
   }: { 
     title: string; 
     subtitle: string; 
@@ -105,7 +107,7 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
             <h4 className={`text-sm font-bold ${color} uppercase tracking-wider`}>{title}</h4>
             <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">{subtitle}</span>
           </div>
-          <button className="p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+          <button onClick={() => onAdd({ isUrgent: quadrantId === 1 || quadrantId === 3, isImportant: quadrantId === 1 || quadrantId === 2 })} className="p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
             <span className="material-symbols-outlined text-[18px]">add</span>
           </button>
         </div>
@@ -193,9 +195,9 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
               <span className="material-symbols-outlined text-[18px]">filter_list</span>
               Filter
             </button>
-            <button className="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-primary/25 transition-all">
+            <button onClick={() => onAdd()} className="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-primary/25 transition-all">
               <span className="material-symbols-outlined text-[18px]">add</span>
-              New Task
+              Add Task
             </button>
           </div>
         </div>
@@ -242,6 +244,7 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
               onDelete={onDelete}
               onEdit={onEdit}
               onStart={onStart}
+              onAdd={onAdd}
             />
             <QuadrantCard 
               title="Schedule" 
@@ -253,6 +256,7 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
               onDelete={onDelete}
               onEdit={onEdit}
               onStart={onStart}
+              onAdd={onAdd}
             />
             <QuadrantCard 
               title="Delegate" 
@@ -264,6 +268,7 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
               onDelete={onDelete}
               onEdit={onEdit}
               onStart={onStart}
+              onAdd={onAdd}
             />
             <QuadrantCard 
               title="Eliminate" 
@@ -275,6 +280,7 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
               onDelete={onDelete}
               onEdit={onEdit}
               onStart={onStart}
+              onAdd={onAdd}
             />
           </div>
         </div>

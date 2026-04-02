@@ -1,7 +1,8 @@
-import type { Task } from '../types/Task';
+import type { Task, Project } from '../types/Task';
 
 interface TaskItemProps {
   task: Task;
+  projects: Project[];
   onUpdate: (id: string, updates: Partial<Task>) => void;
   onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
@@ -9,7 +10,9 @@ interface TaskItemProps {
   isActive?: boolean;
 }
 
-export const TaskItem: React.FC<TaskItemProps> = ({ task, onUpdate, onDelete, onEdit, onStart, isActive }) => {
+export const TaskItem: React.FC<TaskItemProps> = ({ task, projects, onUpdate, onDelete, onEdit, onStart, isActive }) => {
+  const project = projects.find(p => p.id === task.projectId);
+
   const handleStatusChange = () => {
     onUpdate(task.id, { status: task.status === 'completed' ? 'pending' : 'completed' });
   };
@@ -26,6 +29,18 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onUpdate, onDelete, on
               <div className="flex-1">
                   <div className="flex items-center gap-3 mb-3">
                       <span className="px-2.5 py-1 rounded-md bg-purple-500/20 text-purple-600 dark:text-purple-300 text-xs font-semibold border border-purple-500/30 font-bold">Active Focus</span>
+                      {project && (
+                        <span 
+                          className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-tight border"
+                          style={{ 
+                            backgroundColor: `${project.color}15`, 
+                            color: project.color,
+                            borderColor: `${project.color}30` 
+                          }}
+                        >
+                          {project.name}
+                        </span>
+                      )}
                   </div>
                   <h4 className={`text-2xl font-bold text-slate-900 dark:text-white mb-2 leading-tight ${isCompleted ? 'line-through text-slate-400' : ''}`}>
                     {task.title}
@@ -65,11 +80,25 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onUpdate, onDelete, on
         </button>
 
         <div className="flex-1 cursor-pointer" onClick={() => onStart(task)}>
-            <h5 className={`font-semibold text-base transition-colors ${isCompleted ? 'text-slate-400 dark:text-slate-300 line-through' : 'text-slate-900 dark:text-white group-hover:text-primary'}`}>
-              {task.title}
-            </h5>
+            <div className="flex items-center gap-2 mb-1">
+              <h5 className={`font-semibold text-base transition-colors ${isCompleted ? 'text-slate-400 dark:text-slate-300 line-through' : 'text-slate-900 dark:text-white group-hover:text-primary'}`}>
+                {task.title}
+              </h5>
+              {project && (
+                <span 
+                  className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-tighter"
+                  style={{ 
+                    backgroundColor: `${project.color}10`, 
+                    color: project.color,
+                    border: `1px solid ${project.color}20` 
+                  }}
+                >
+                  {project.name}
+                </span>
+              )}
+            </div>
             {task.description && (
-              <p className="text-xs text-slate-500 mt-1 line-clamp-1">{task.description}</p>
+              <p className="text-xs text-slate-500 line-clamp-1">{task.description}</p>
             )}
         </div>
 

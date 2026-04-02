@@ -1,15 +1,16 @@
-import type { Task } from '../types/Task';
+import type { Task, Project } from '../types/Task';
 import { TaskItem } from './TaskItem';
 
 interface TaskListProps {
   tasks: Task[];
+  projects: Project[];
   onUpdate: (id: string, updates: Partial<Task>) => void;
   onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
   onStart: (task: Task) => void;
 }
 
-export const TaskList: React.FC<TaskListProps> = ({ tasks, onUpdate, onDelete, onEdit, onStart }) => {
+export const TaskList: React.FC<TaskListProps> = ({ tasks, projects, onUpdate, onDelete, onEdit, onStart }) => {
   const pendingTasks = tasks.filter(t => t.status !== 'completed');
   const completedTasks = tasks.filter(t => t.status === 'completed');
 
@@ -40,6 +41,7 @@ export const TaskList: React.FC<TaskListProps> = ({ tasks, onUpdate, onDelete, o
            <TaskItem 
             key={activeTask.id} 
             task={activeTask} 
+            projects={projects}
             onUpdate={onUpdate} 
             onDelete={onDelete} 
             onEdit={onEdit}
@@ -55,6 +57,7 @@ export const TaskList: React.FC<TaskListProps> = ({ tasks, onUpdate, onDelete, o
           <TaskItem 
             key={task.id} 
             task={task} 
+            projects={projects}
             onUpdate={onUpdate} 
             onDelete={onDelete}
             onEdit={onEdit}
@@ -67,6 +70,7 @@ export const TaskList: React.FC<TaskListProps> = ({ tasks, onUpdate, onDelete, o
            <TaskItem 
              key={task.id} 
              task={task} 
+             projects={projects}
              onUpdate={onUpdate} 
              onDelete={onDelete} 
              onEdit={onEdit}

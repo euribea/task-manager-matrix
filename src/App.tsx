@@ -135,6 +135,19 @@ function App() {
 
   const handleUpdateTask = async (id: string, updates: Partial<Task>) => {
     try {
+      if (!id) {
+        // Handle CREATE from modal
+        await addDoc(collection(db, 'tasks'), {
+          ...updates,
+          status: updates.status || 'Pendiente',
+          notes: updates.notes || updates.description || '',
+          userId: 'flux-titan-user-001',
+          createdAt: serverTimestamp(),
+          projectId: updates.projectId || selectedProjectId || ''
+        });
+        return;
+      }
+
       const taskRef = doc(db, 'tasks', id);
       const firestoreUpdates: any = { ...updates };
       
@@ -148,8 +161,8 @@ function App() {
 
       await updateDoc(taskRef, firestoreUpdates);
     } catch (err: any) {
-      console.error("Error updating task: ", err);
-      setError(err.message || 'Error occurred while updating task.');
+      console.error("Error updating/creating task: ", err);
+      setError(err.message || 'Error occurred while saving task.');
     }
   };
 
@@ -233,6 +246,18 @@ function App() {
     setIsEditModalOpen(true);
   };
 
+  const handleOpenNewTaskModal = () => {
+    setEditingTask({ 
+      id: '', 
+      title: '', 
+      status: 'Pendiente', 
+      isUrgent: false, 
+      isImportant: false,
+      projectId: selectedProjectId || '' 
+    } as Task);
+    setIsEditModalOpen(true);
+  };
+
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-white dark:bg-background-dark text-slate-900 dark:text-white transition-colors">
@@ -311,11 +336,11 @@ function App() {
   const renderMainContent = () => {
     switch (currentView) {
       case 'gantt':
-        return <GanttChart tasks={filteredTasks} projects={projects} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onEdit={handleEditTask} onStart={handleStartPomodoro} />;
+        return <GanttChart tasks={filteredTasks} projects={projects} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onEdit={handleEditTask} onStart={handleStartPomodoro} onAdd={handleOpenNewTaskModal} />;
       case 'insights':
         return <InsightsView tasks={filteredTasks} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onEdit={handleEditTask} onStart={handleStartPomodoro} />;
       case 'matrix':
-        return <TaskMatrix tasks={filteredTasks} onStart={handleStartPomodoro} onEdit={handleEditTask} onDelete={handleDeleteTask} onUpdate={handleUpdateTask} />;
+        return <TaskMatrix tasks={filteredTasks} onStart={handleStartPomodoro} onEdit={handleEditTask} onDelete={handleDeleteTask} onUpdate={handleUpdateTask} onAdd={handleOpenNewTaskModal} />;
       case 'settings':
         return (
           <SettingsView 
@@ -436,6 +461,7 @@ function App() {
                         <div className="lg:col-span-2 flex flex-col gap-6 border-slate-800">
                           <TaskList 
                             tasks={filteredTasks} 
+                            projects={projects}
                             onUpdate={handleUpdateTask} 
                             onDelete={handleDeleteTask} 
                             onEdit={handleEditTask}
