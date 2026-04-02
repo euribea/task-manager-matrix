@@ -350,10 +350,10 @@ function App() {
                 </div>
                 
                 <div className="flex items-center gap-4 md:gap-6">
-                  <div className="hidden md:flex items-center bg-surface-lighter rounded-lg px-3 py-2 w-64 border border-slate-700 focus-within:border-primary transition-colors">
+                  <div className="hidden md:flex items-center bg-slate-50 dark:bg-surface-lighter rounded-lg px-3 py-2 w-64 border border-slate-200 dark:border-slate-700 focus-within:border-primary transition-colors">
                       <span className="material-symbols-outlined text-slate-400 text-[20px]">search</span>
                       <input 
-                        className="bg-transparent border-none text-sm text-white placeholder-slate-400 focus:ring-0 w-full ml-2 p-0 outline-none" 
+                        className="bg-transparent border-none text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-0 w-full ml-2 p-0 outline-none" 
                         placeholder="Search tasks..." 
                         type="text"
                         value={searchQuery}
@@ -362,16 +362,16 @@ function App() {
                       {searchQuery && (
                         <button 
                           onClick={() => setSearchQuery('')}
-                          className="p-1 hover:text-white text-slate-500 transition-colors"
+                          className="p-1 hover:text-slate-900 dark:hover:text-white text-slate-500 transition-colors"
                         >
                           <span className="material-symbols-outlined text-[18px]">close</span>
                         </button>
                       )}
                   </div>
                   {/* Notification bell */}
-                  <button className="relative p-2 text-slate-400 hover:text-white transition-colors rounded-full hover:bg-surface-lighter">
+                  <button className="relative p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors rounded-full hover:bg-slate-100 dark:hover:bg-surface-lighter">
                     <span className="material-symbols-outlined">notifications</span>
-                    <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-background-dark"></span>
+                    <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
                   </button>
                 </div>
             </header>
@@ -390,44 +390,44 @@ function App() {
                     {currentView === 'dashboard' && (
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                           {/* Tasks Completed */}
-                          <div className="bg-surface-lighter rounded-xl p-6 border border-slate-700/50 flex flex-col justify-between hover:border-primary/50 transition-colors group">
+                          <div className="bg-white dark:bg-surface-lighter rounded-xl p-6 border border-slate-200 dark:border-slate-700/50 flex flex-col justify-between hover:border-primary/50 transition-colors group shadow-sm dark:shadow-none">
                               <div className="flex items-start justify-between">
-                                  <div className="p-2 rounded-lg bg-green-500/10 text-green-400">
+                                  <div className="p-2 rounded-lg bg-green-500/10 text-green-500 dark:text-green-400">
                                       <span className="material-symbols-outlined">check_circle</span>
                                   </div>
-                                  <span className="text-xs font-medium text-green-400 bg-green-400/10 px-2 py-1 rounded-full">+{progressPercent}%</span>
+                                  <span className="text-xs font-medium text-green-600 dark:text-green-400 bg-green-400/10 px-2 py-1 rounded-full">+{progressPercent}%</span>
                               </div>
                               <div className="mt-4">
-                                  <p className="text-3xl font-bold text-white tracking-tight">{completedCount}<span className="text-xl text-slate-500 font-medium">/{tasks.length}</span></p>
-                                  <p className="text-sm text-slate-400 mt-1">Tasks Completed</p>
+                                  <p className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">{completedCount}<span className="text-xl text-slate-400 font-medium">/{tasks.length}</span></p>
+                                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Tasks Completed</p>
                               </div>
                           </div>
 
                           {/* Focus Time */}
-                          <div className="bg-surface-lighter rounded-xl p-6 border border-slate-700/50 flex flex-col justify-between hover:border-primary/50 transition-colors group">
+                          <div className="bg-white dark:bg-surface-lighter rounded-xl p-6 border border-slate-200 dark:border-slate-700/50 flex flex-col justify-between hover:border-primary/50 transition-colors group shadow-sm dark:shadow-none">
                               <div className="flex items-start justify-between">
                                   <div className="p-2 rounded-lg bg-primary/10 text-primary">
                                       <span className="material-symbols-outlined">schedule</span>
                                   </div>
-                                  <span className="text-xs font-medium text-green-400 bg-green-400/10 px-2 py-1 rounded-full">+25m</span>
+                                  <span className="text-xs font-medium text-green-600 dark:text-green-400 bg-green-400/10 px-2 py-1 rounded-full">+25m</span>
                               </div>
                               <div className="mt-4">
-                                  <p className="text-3xl font-bold text-white tracking-tight">3h 20m</p>
-                                  <p className="text-sm text-slate-400 mt-1">Focus Time</p>
+                                  <p className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">3h 20m</p>
+                                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Focus Time</p>
                               </div>
                           </div>
 
                           {/* Pending Tasks */}
-                          <div className="bg-surface-lighter rounded-xl p-6 border border-slate-700/50 flex flex-col justify-between hover:border-primary/50 transition-colors group">
+                          <div className="bg-white dark:bg-surface-lighter rounded-xl p-6 border border-slate-200 dark:border-slate-700/50 flex flex-col justify-between hover:border-primary/50 transition-colors group shadow-sm dark:shadow-none">
                               <div className="flex items-start justify-between">
-                                  <div className="p-2 rounded-lg bg-orange-500/10 text-orange-400">
+                                  <div className="p-2 rounded-lg bg-orange-500/10 text-orange-500 dark:text-orange-400">
                                       <span className="material-symbols-outlined">pending_actions</span>
                                   </div>
-                                  <span className="text-xs font-medium text-orange-400 bg-orange-400/10 px-2 py-1 rounded-full">-2</span>
+                                  <span className="text-xs font-medium text-orange-600 dark:text-orange-400 bg-orange-400/10 px-2 py-1 rounded-full">-2</span>
                               </div>
                               <div className="mt-4">
-                                  <p className="text-3xl font-bold text-white tracking-tight">{pendingCount}</p>
-                                  <p className="text-sm text-slate-400 mt-1">Pending Tasks</p>
+                                  <p className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">{pendingCount}</p>
+                                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Pending Tasks</p>
                               </div>
                           </div>
                       </div>
@@ -452,66 +452,66 @@ function App() {
                           {/* Matrix Mini Overview - matching Stitch design */}
                           {currentView === 'dashboard' && (
                             <>
-                              <div className="bg-surface-lighter rounded-xl border border-slate-700/50 p-5">
-                                <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+                              <div className="bg-white dark:bg-surface-lighter rounded-xl border border-slate-200 dark:border-slate-700/50 p-5 shadow-sm dark:shadow-none">
+                                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-slate-400 text-[20px]">grid_view</span>
                                     Matrix Overview
                                 </h3>
                                 <div className="grid grid-cols-2 gap-2 h-48">
-                                    <div onClick={() => setCurrentView('matrix')} className="bg-[#2c3b55] rounded-lg p-3 flex flex-col justify-between border-l-4 border-red-500 hover:bg-[#324260] transition-colors cursor-pointer">
-                                        <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Do First</span>
-                                        <span className="text-2xl font-bold text-white">3</span>
+                                    <div onClick={() => setCurrentView('matrix')} className="bg-slate-50 dark:bg-[#2c3b55] rounded-lg p-3 flex flex-col justify-between border-l-4 border-red-500 hover:bg-slate-100 dark:hover:bg-[#324260] transition-colors cursor-pointer">
+                                        <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Do First</span>
+                                        <span className="text-2xl font-bold text-slate-900 dark:text-white">3</span>
                                     </div>
-                                    <div onClick={() => setCurrentView('matrix')} className="bg-[#2c3b55] rounded-lg p-3 flex flex-col justify-between border-l-4 border-blue-500 hover:bg-[#324260] transition-colors cursor-pointer">
-                                        <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Schedule</span>
-                                        <span className="text-2xl font-bold text-white">5</span>
+                                    <div onClick={() => setCurrentView('matrix')} className="bg-slate-50 dark:bg-[#2c3b55] rounded-lg p-3 flex flex-col justify-between border-l-4 border-blue-500 hover:bg-slate-100 dark:hover:bg-[#324260] transition-colors cursor-pointer">
+                                        <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Schedule</span>
+                                        <span className="text-2xl font-bold text-slate-900 dark:text-white">5</span>
                                     </div>
-                                    <div onClick={() => setCurrentView('matrix')} className="bg-[#2c3b55] rounded-lg p-3 flex flex-col justify-between border-l-4 border-orange-500 hover:bg-[#324260] transition-colors cursor-pointer">
-                                        <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Delegate</span>
-                                        <span className="text-2xl font-bold text-white">2</span>
+                                    <div onClick={() => setCurrentView('matrix')} className="bg-slate-50 dark:bg-[#2c3b55] rounded-lg p-3 flex flex-col justify-between border-l-4 border-orange-500 hover:bg-slate-100 dark:hover:bg-[#324260] transition-colors cursor-pointer">
+                                        <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Delegate</span>
+                                        <span className="text-2xl font-bold text-slate-900 dark:text-white">2</span>
                                     </div>
-                                    <div onClick={() => setCurrentView('matrix')} className="bg-[#2c3b55] rounded-lg p-3 flex flex-col justify-between border-l-4 border-slate-500 hover:bg-[#324260] transition-colors cursor-pointer">
-                                        <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Eliminate</span>
-                                        <span className="text-2xl font-bold text-white">1</span>
+                                    <div onClick={() => setCurrentView('matrix')} className="bg-slate-50 dark:bg-[#2c3b55] rounded-lg p-3 flex flex-col justify-between border-l-4 border-slate-500 hover:bg-slate-100 dark:hover:bg-[#324260] transition-colors cursor-pointer">
+                                        <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Eliminate</span>
+                                        <span className="text-2xl font-bold text-slate-900 dark:text-white">1</span>
                                     </div>
                                 </div>
                               </div>
 
                               {/* Tomorrow / Next Up */}
-                              <div className="bg-surface-lighter rounded-xl border border-slate-700/50 p-5 flex-1">
+                               <div className="bg-white dark:bg-surface-lighter rounded-xl border border-slate-200 dark:border-slate-700/50 p-5 flex-1 shadow-sm dark:shadow-none">
                                 <div className="flex items-center justify-between mb-4">
-                                  <h3 className="text-base font-bold text-white">Tomorrow</h3>
-                                  <button className="p-1 text-slate-400 hover:text-white rounded hover:bg-slate-700">
+                                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Tomorrow</h3>
+                                  <button className="p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                                     <span className="material-symbols-outlined text-[20px]">add</span>
                                   </button>
                                 </div>
                                 <div className="flex flex-col gap-3">
-                                  <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-700/30 transition-colors cursor-pointer">
-                                    <div className="mt-1 w-2 h-2 rounded-full bg-slate-500"></div>
+                                  <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors cursor-pointer">
+                                    <div className="mt-1 w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-500"></div>
                                     <div>
-                                      <p className="text-sm text-slate-200 font-medium">Review Q4 Budget</p>
+                                      <p className="text-sm text-slate-700 dark:text-slate-200 font-medium">Review Q4 Budget</p>
                                       <p className="text-xs text-slate-500">10:00 AM • Finance</p>
                                     </div>
                                   </div>
-                                  <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-700/30 transition-colors cursor-pointer">
-                                    <div className="mt-1 w-2 h-2 rounded-full bg-slate-500"></div>
+                                  <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors cursor-pointer">
+                                    <div className="mt-1 w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-500"></div>
                                     <div>
-                                      <p className="text-sm text-slate-200 font-medium">Dentist Appointment</p>
+                                      <p className="text-sm text-slate-700 dark:text-slate-200 font-medium">Dentist Appointment</p>
                                       <p className="text-xs text-slate-500">02:30 PM • Personal</p>
                                     </div>
                                   </div>
-                                  <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-700/30 transition-colors cursor-pointer">
-                                    <div className="mt-1 w-2 h-2 rounded-full bg-slate-500"></div>
+                                  <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors cursor-pointer">
+                                    <div className="mt-1 w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-500"></div>
                                     <div>
-                                      <p className="text-sm text-slate-200 font-medium">Team Sync</p>
+                                      <p className="text-sm text-slate-700 dark:text-slate-200 font-medium">Team Sync</p>
                                       <p className="text-xs text-slate-500">04:00 PM • Work</p>
                                     </div>
                                   </div>
                                 </div>
                                 {/* Productivity Tip */}
-                                <div className="mt-6 p-4 rounded-lg bg-gradient-to-r from-primary/20 to-purple-500/20 border border-white/5">
+                                <div className="mt-6 p-4 rounded-lg bg-gradient-to-r from-primary/10 to-purple-500/10 dark:from-primary/20 dark:to-purple-500/20 border border-primary/10 dark:border-white/5">
                                   <p className="text-xs font-semibold text-primary mb-1">Productivity Tip</p>
-                                  <p className="text-sm text-white italic">"The key is not to prioritize what's on your schedule, but to schedule your priorities."</p>
+                                  <p className="text-sm text-slate-700 dark:text-white italic">"The key is not to prioritize what's on your schedule, but to schedule your priorities."</p>
                                 </div>
                               </div>
                             </>
@@ -519,9 +519,9 @@ function App() {
                           
                           {/* Pomodoro hint card for non-dashboard views */}
                           {currentView === 'tasks' && (
-                            <div className="bg-surface-lighter border border-slate-700/50 rounded-xl p-5 shadow-lg relative overflow-hidden flex flex-col items-center">
+                            <div className="bg-white dark:bg-surface-lighter border border-slate-200 dark:border-slate-700/50 rounded-xl p-5 shadow-lg relative overflow-hidden flex flex-col items-center">
                                 <span className="material-symbols-outlined text-6xl text-primary/20 mb-3 block text-center">timelapse</span>
-                                <p className="text-sm text-center text-slate-300">Click <strong>"Focus Session"</strong> on any task to instantly enter full-screen pomodoro mode.</p>
+                                <p className="text-sm text-center text-slate-600 dark:text-slate-300">Click <strong>"Focus Session"</strong> on any task to instantly enter full-screen pomodoro mode.</p>
                             </div>
                           )}
                         </div>
@@ -541,12 +541,12 @@ function App() {
               <div className="flex flex-col gap-6">
                   {/* User Profile Header */}
                   <div className="flex gap-3 items-center px-2">
-                      <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/30 flex items-center justify-center bg-slate-800">
+                      <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/30 flex items-center justify-center bg-slate-100 dark:bg-slate-800 transition-colors">
                         <span className="material-symbols-outlined text-primary text-[24px]">{appIcon}</span>
                       </div>
                       <div className="flex flex-col">
-                          <h1 className="text-white text-base font-bold leading-tight">{appName}</h1>
-                          <p className="text-slate-400 text-xs font-medium">Pro Plan</p>
+                          <h1 className="text-slate-900 dark:text-white text-base font-bold leading-tight">{appName}</h1>
+                          <p className="text-slate-500 dark:text-slate-400 text-xs font-medium">Pro Plan</p>
                       </div>
                   </div>
                   {/* Navigation */}

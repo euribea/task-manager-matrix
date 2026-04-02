@@ -18,18 +18,18 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onAdd }) => {
   };
 
   return (
-    <div className="bg-surface-lighter rounded-xl border border-slate-700/50 p-5 mt-6">
+    <div className="bg-white dark:bg-surface-lighter rounded-xl border border-slate-200 dark:border-slate-700/50 p-5 mt-6 shadow-sm dark:shadow-none transition-colors">
       <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-bold text-white">Quick Add</h3>
+          <h3 className="text-base font-bold text-slate-900 dark:text-white">Quick Add</h3>
       </div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <div className="flex items-center bg-[#1e2636] rounded-lg px-3 py-2 border border-slate-700 focus-within:border-primary transition-colors">
+        <div className="flex items-center bg-slate-50 dark:bg-[#1e2636] rounded-lg px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary transition-colors">
             <span className="material-symbols-outlined text-slate-400 text-[20px]">add_task</span>
             <input 
               type="text" 
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="bg-transparent border-none text-sm text-white placeholder-slate-400 focus:ring-0 w-full ml-2 p-0 outline-none" 
+              className="bg-transparent border-none text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-0 w-full ml-2 p-0 outline-none" 
               placeholder="What needs to be done?" 
             />
         </div>

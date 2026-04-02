@@ -98,14 +98,14 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
       <div 
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        className={`bg-surface-lighter rounded-xl border border-slate-700/50 p-5 flex flex-col min-h-[250px] transition-colors hover:border-slate-600`}
+        className={`bg-white dark:bg-surface-lighter rounded-xl border border-slate-200 dark:border-slate-700/50 p-5 flex flex-col min-h-[250px] transition-colors hover:border-slate-300 dark:hover:border-slate-600 shadow-sm dark:shadow-none`}
       >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <h4 className={`text-sm font-bold ${color} uppercase tracking-wider`}>{title}</h4>
-            <span className="text-[10px] text-slate-400 font-medium">{subtitle}</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">{subtitle}</span>
           </div>
-          <button className="p-1 text-slate-400 hover:text-white rounded hover:bg-slate-700 transition-colors">
+          <button className="p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
             <span className="material-symbols-outlined text-[18px]">add</span>
           </button>
         </div>
@@ -115,10 +115,10 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
               key={task.id} 
               draggable
               onDragStart={(e) => handleDragStart(e, task.id)}
-              className="group flex flex-col gap-2 p-3 rounded-xl bg-slate-800/30 border border-slate-700/50 hover:border-primary/30 transition-all hover:bg-slate-800/50 cursor-grab active:cursor-grabbing"
+              className="group flex flex-col gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 hover:border-primary/30 transition-all hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-grab active:cursor-grabbing shadow-sm dark:shadow-none"
             >
               <div className="flex items-center justify-between pointer-events-none">
-                <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${color.replace('text-', 'border-').replace('text-', 'bg-')}/20 ${color} bg-slate-900/50`}>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${color.replace('text-', 'border-').replace('text-', 'bg-')}/20 ${color} bg-white dark:bg-slate-900/50`}>
                   {task.quadrantId === 1 ? 'DO' : task.quadrantId === 2 ? 'PLAN' : task.quadrantId === 3 ? 'DELEGATE' : 'DROP'}
                 </span>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto">
@@ -145,12 +145,12 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
                 </button>
               </div>
             </div>
-            <h5 onClick={() => onStart(task.originalTask)} className="text-sm font-bold text-white leading-tight cursor-pointer hover:text-primary transition-colors">{task.title}</h5>
-            <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">{task.originalTask.description || task.originalTask.notes || 'No details provided.'}</p>
+            <h5 onClick={() => onStart(task.originalTask)} className="text-sm font-bold text-slate-900 dark:text-white leading-tight cursor-pointer hover:text-primary transition-colors">{task.title}</h5>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">{task.originalTask.description || task.originalTask.notes || 'No details provided.'}</p>
             <div className="flex items-center justify-between mt-1">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-slate-600 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[14px] text-slate-300">person</span>
+                <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[14px] text-slate-500 dark:text-slate-300">person</span>
                 </div>
               </div>
               {task.originalTask.dueDate && (
@@ -164,9 +164,9 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
         ))}
         {qTasks.length === 0 && (
           <div className="flex flex-col items-center justify-center py-8 opacity-40">
-            <span className="material-symbols-outlined text-4xl text-slate-500 mb-2">check_circle</span>
-            <p className="text-xs text-slate-400">Clean slate!</p>
-            <p className="text-[10px] text-slate-500">Distractions eliminated.</p>
+            <span className="material-symbols-outlined text-4xl text-slate-400 dark:text-slate-500 mb-2">check_circle</span>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Clean slate!</p>
+            <p className="text-[10px] text-slate-600 dark:text-slate-500">Distractions eliminated.</p>
           </div>
         )}
       </div>
@@ -177,19 +177,19 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
   return (
     <div className="flex flex-col h-full overflow-y-auto">
       {/* Header */}
-      <header className="shrink-0 px-6 md:px-10 py-6 border-b border-slate-800 bg-background-dark/95 backdrop-blur z-10">
+      <header className="shrink-0 px-6 md:px-10 py-6 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-background-dark/95 backdrop-blur z-10 transition-colors">
         <div className="flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-2 text-sm text-slate-400 mb-1">
+            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-1">
               <span>Productivity Suite</span>
               <span className="material-symbols-outlined text-sm">chevron_right</span>
-              <span className="text-white font-semibold">Eisenhower Matrix</span>
+              <span className="text-slate-900 dark:text-white font-semibold">Eisenhower Matrix</span>
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Task Matrix</h2>
-            <p className="text-sm text-slate-400 mt-1">Prioritize your workload by urgency and importance to maximize productivity.</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Task Matrix</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Prioritize your workload by urgency and importance to maximize productivity.</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white border border-slate-700 px-3 py-1.5 rounded-lg transition-colors">
+            <button className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg transition-colors">
               <span className="material-symbols-outlined text-[18px]">filter_list</span>
               Filter
             </button>
@@ -206,23 +206,23 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
           {/* Workflow Velocity */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary text-[20px]">bar_chart</span>
                 Workflow Velocity
               </h3>
-              <span className="text-xs text-slate-400">On Track • 85% in last week</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400">On Track • 85% in last week</span>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {velocityStats.map((stat) => (
-                <div key={stat.label} className="bg-surface-lighter rounded-xl p-4 border border-slate-700/50 hover:border-slate-600 transition-colors group">
+                <div key={stat.label} className="bg-white dark:bg-surface-lighter rounded-xl p-4 border border-slate-200 dark:border-slate-700/50 hover:border-slate-300 dark:hover:border-slate-600 transition-colors group shadow-sm dark:shadow-none">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-slate-400 font-medium">{stat.label}</span>
-                    <div className="p-1 rounded bg-slate-700/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{stat.label}</span>
+                    <div className="p-1 rounded bg-slate-100 dark:bg-slate-700/50 opacity-0 group-hover:opacity-100 transition-opacity">
                       <span className="material-symbols-outlined text-slate-400 text-[14px]">trending_up</span>
                     </div>
                   </div>
-                  <p className="text-2xl font-bold text-white">{stat.count} <span className="text-sm text-slate-500 font-medium">tasks</span></p>
-                  <div className="mt-3 h-1 bg-slate-700 rounded-full">
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{stat.count} <span className="text-sm text-slate-400 font-medium">tasks</span></p>
+                  <div className="mt-3 h-1 bg-slate-100 dark:bg-slate-700 rounded-full">
                     <div className={`h-full ${stat.color} rounded-full transition-all`} style={{ width: `${Math.min((stat.count / 30) * 100, 100)}%` }}></div>
                   </div>
                 </div>
@@ -246,7 +246,7 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
             <QuadrantCard 
               title="Schedule" 
               subtitle="Important but Not Urgent"
-              color="text-yellow-400" 
+              color="text-yellow-600 dark:text-yellow-400" 
               qTasks={matrixTasks.filter(t => t.quadrantId === 2)} 
               quadrantId={2}
               onUpdate={onUpdate}
@@ -257,7 +257,7 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
             <QuadrantCard 
               title="Delegate" 
               subtitle="Urgent but Not Important"
-              color="text-purple-400" 
+              color="text-purple-600 dark:text-purple-400" 
               qTasks={matrixTasks.filter(t => t.quadrantId === 3)} 
               quadrantId={3}
               onUpdate={onUpdate}
@@ -268,7 +268,7 @@ export const TaskMatrix: React.FC<TaskMatrixProps> = ({ tasks, onStart, onUpdate
             <QuadrantCard 
               title="Eliminate" 
               subtitle="Not Important & Not Urgent"
-              color="text-slate-400" 
+              color="text-slate-500 dark:text-slate-400" 
               qTasks={matrixTasks.filter(t => t.quadrantId === 4)} 
               quadrantId={4}
               onUpdate={onUpdate}

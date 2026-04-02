@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply transition-colors duration-300 ease-in-out antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  /* Select specific elements to transition if body alone is too heavy, 
+     but modern browsers handle body background transitions smoothly. */
+  .transition-colors {
+    @apply duration-300;
+  }
+}
+
 .progress-ring__circle {
     transition: stroke-dashoffset 0.35s;
     transform: rotate(-90deg);
