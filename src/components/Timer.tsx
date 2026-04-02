@@ -13,8 +13,6 @@ export const Timer: React.FC<TimerProps> = ({ task, onExit, onEdit }) => {
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [isActive, setIsActive] = useState(false);
   const [mode, setMode] = useState<'focus' | 'shortBreak' | 'longBreak'>('focus');
-  const [completedSessions, setCompletedSessions] = useState(4);
-  const totalSessions = 8;
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
@@ -26,7 +24,6 @@ export const Timer: React.FC<TimerProps> = ({ task, onExit, onEdit }) => {
     } else if (timeLeft === 0) {
       setIsActive(false);
       if (mode === 'focus') {
-        setCompletedSessions(prev => Math.min(prev + 1, totalSessions));
         const nextTime = 5 * 60;
         setMode('shortBreak');
         setTimeLeft(nextTime);
@@ -64,6 +61,8 @@ export const Timer: React.FC<TimerProps> = ({ task, onExit, onEdit }) => {
   const totalTime = mode === 'focus' ? 25 * 60 : mode === 'shortBreak' ? 5 * 60 : 15 * 60;
   const progressPercentage = ((totalTime - timeLeft) / totalTime) * 100;
   const strokeDashoffset = 283 - (283 * progressPercentage) / 100;
+  const isCompleted = task.status === 'completed';
+  const sessionLabel = isCompleted ? "Session Completed" : "Session Active";
 
   return (
     <div className="flex-1 flex flex-col h-full w-full bg-white dark:bg-[#0a0f18] transition-colors">
@@ -186,32 +185,20 @@ export const Timer: React.FC<TimerProps> = ({ task, onExit, onEdit }) => {
         )}
       </main>
 
-      {/* Footer: Daily Stats - matching Stitch design exactly */}
+      {/* Footer: Daily Stats - updated to remove mock data */}
       <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-[#111621]/90 backdrop-blur-md px-6 py-4 shrink-0">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-slate-500 dark:text-slate-400">Sessions Today:</span>
+            <span className="text-sm font-medium text-slate-500 dark:text-slate-400">Current Task Progress:</span>
             <div className="flex items-center gap-1.5">
-              {/* Completed sessions */}
-              {Array.from({ length: completedSessions }).map((_, i) => (
-                <div key={`completed-${i}`} className="w-2.5 h-2.5 rounded-full bg-primary"></div>
-              ))}
-              {/* Pending/Empty slots */}
-              {Array.from({ length: totalSessions - completedSessions }).map((_, i) => (
-                <div key={`pending-${i}`} className="w-2.5 h-2.5 rounded-full bg-slate-200 dark:bg-slate-700"></div>
-              ))}
+              <div className={`w-2.5 h-2.5 rounded-full ${isCompleted ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-700 animate-pulse'}`}></div>
             </div>
-            <span className="text-xs text-slate-400 dark:text-slate-500 ml-1">({completedSessions}/{totalSessions})</span>
+            <span className="text-xs text-slate-400 dark:text-slate-500 ml-1">{sessionLabel}</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-slate-500 dark:text-slate-400">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-lg">bolt</span>
-              <span>High Focus</span>
-            </div>
-            <div className="w-px h-4 bg-slate-200 dark:bg-slate-700"></div>
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-lg">schedule</span>
-              <span>Total: 2h 15m</span>
+              <span>{isCompleted ? 'Focus Achieved' : 'Tracking Focus'}</span>
             </div>
           </div>
         </div>

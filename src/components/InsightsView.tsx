@@ -13,21 +13,23 @@ export const InsightsView: React.FC<InsightsViewProps> = ({ tasks, onUpdate, onD
   const totalCount = tasks.length;
   const focusScore = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
-  // Mock data for charts (visual representation)
-  const velocityData = [4, 6, 5, 8, 7, 3, 6]; // Tasks per day
-  const maxVelocity = Math.max(...velocityData);
+  // Mock data for charts - Zeroed out until real analytics integration
+  const velocityData = [0, 0, 0, 0, 0, 0, 0]; 
+  const maxVelocity = Math.max(...velocityData, 1); // Avoid division by zero
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-  // Peak hours mock data
-  const peakHoursData = [3, 7, 9, 6, 4, 2];
-  const maxPeakHour = Math.max(...peakHoursData);
+ 
+  // Peak hours data
+  const peakHoursData = [0, 0, 0, 0, 0, 0];
+  const maxPeakHour = Math.max(...peakHoursData, 1);
   const peakHourLabels = ['8am', '10am', '12pm', '2pm', '4pm', '6pm'];
-
-  // Focus distribution
-  const deepWorkPct = 62;
-  const adminPct = 28;
-  const otherPct = 10;
-
+ 
+  // Focus distribution (placeholder logic based on actual tasks if possible, or 0)
+  const inProgressCount = tasks.filter(t => t.status === 'in-progress').length;
+  const pendingCount = tasks.filter(t => t.status === 'pending').length;
+  
+  const deepWorkPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const adminPct = totalCount > 0 ? Math.round((inProgressCount / totalCount) * 100) : 0;
+  const otherPct = totalCount > 0 ? Math.round((pendingCount / totalCount) * 100) : 0;
   // SVG donut chart calculations
   const donutRadius = 40;
   const donutCircumference = 2 * Math.PI * donutRadius;
@@ -271,8 +273,9 @@ export const InsightsView: React.FC<InsightsViewProps> = ({ tasks, onUpdate, onD
                 <span className="text-xs font-bold text-primary dark:text-primary uppercase tracking-wider">Daily Insight</span>
               </div>
               <p className="text-sm text-slate-700 dark:text-white leading-relaxed">
-                You are most productive between <strong>9 AM and 11 AM</strong>.
-                Consider scheduling your "Deep Work" sessions during this window to maximize your Focus Score.
+                {totalCount > 0 
+                  ? "Based on your current activity, we're analyzing your peak productivity windows to provide personalized focus insights."
+                  : "Start completing tasks to unlock personalized productivity insights and peak performance analysis."}
               </p>
             </div>
 
